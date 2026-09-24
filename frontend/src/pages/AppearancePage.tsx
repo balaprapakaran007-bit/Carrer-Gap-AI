@@ -42,10 +42,10 @@ export const AppearancePage: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const presetThemes = [
+    { id: 'sunset', name: 'Warm Orange (Default)', color: '#F97316', desc: 'Warm, high-impact signature orange' },
     { id: 'ocean', name: 'Ocean Blue', color: '#2563EB', desc: 'Crisp, analytical modern blue' },
     { id: 'emerald', name: 'Emerald', color: '#10B981', desc: 'Fresh, growth-focused vibrant green' },
     { id: 'violet', name: 'Violet', color: '#7C3AED', desc: 'Deep, creative intelligence purple' },
-    { id: 'sunset', name: 'Sunset Orange', color: '#F97316', desc: 'Energetic, high-impact warm orange' },
     { id: 'rose', name: 'Rose', color: '#E11D48', desc: 'Sleek, bold modern crimson' },
     { id: 'cyan', name: 'Cyan', color: '#06B6D4', desc: 'Electric, sharp tech cyan' },
     { id: 'indigo', name: 'Indigo', color: '#4F46E5', desc: 'Classic, refined engineering indigo' },

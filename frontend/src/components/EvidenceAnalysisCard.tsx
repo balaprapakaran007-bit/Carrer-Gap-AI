@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SkillAnalysisItem, EvidenceLevel } from '../types';
+import { SkillAnalysisItem } from '../types';
 import { ShieldCheck, ShieldAlert, AlertCircle, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = ({ skills }) => {
@@ -14,8 +14,9 @@ export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = (
     {
       level: 'Strong',
       count: strong.length,
-      color: 'emerald',
-      bgColor: 'bg-emerald-500',
+      color: '#16A34A',
+      bgColor: 'bg-[#DCFCE7]',
+      textColor: 'text-[#16A34A]',
       icon: ShieldCheck,
       description: 'Skills demonstrated in projects or work history with quantified outcomes, metrics, or pipeline scale.',
       items: strong
@@ -23,8 +24,9 @@ export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = (
     {
       level: 'Moderate',
       count: moderate.length,
-      color: 'blue',
-      bgColor: 'bg-blue-500',
+      color: '#F97316',
+      bgColor: 'bg-[#FFF3E8]',
+      textColor: 'text-[#F97316]',
       icon: ShieldAlert,
       description: 'Demonstrated in project or coursework context, but lacks production scale metrics or architectural depth.',
       items: moderate
@@ -32,8 +34,9 @@ export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = (
     {
       level: 'Weak',
       count: weak.length,
-      color: 'amber',
-      bgColor: 'bg-amber-500',
+      color: '#D97706',
+      bgColor: 'bg-[#FEF3C7]',
+      textColor: 'text-[#D97706]',
       icon: AlertCircle,
       description: 'Mentioned only in a keyword or skills list without implementation context. At risk in technical screens.',
       items: weak
@@ -41,8 +44,9 @@ export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = (
     {
       level: 'Not Demonstrated',
       count: notDemonstrated.length,
-      color: 'rose',
-      bgColor: 'bg-rose-500',
+      color: '#DC2626',
+      bgColor: 'bg-[#FEE2E2]',
+      textColor: 'text-[#DC2626]',
       icon: HelpCircle,
       description: 'Required by the target job description but entirely absent from your current profile.',
       items: notDemonstrated
@@ -52,39 +56,39 @@ export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = (
   return (
     <div className="space-y-4">
       {/* Evidence Strength Distribution Bar */}
-      <div className="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-4">
+      <div className="p-5 rounded-2xl border border-[#E7E5E4] bg-white shadow-sm space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-100">Evidence Quality Distribution</h3>
-          <span className="text-xs text-slate-400">{skills.length} Evaluated Competencies</span>
+          <h3 className="text-sm font-bold text-[#1C1917]">Evidence Quality Distribution</h3>
+          <span className="text-xs text-[#78716C]">{skills.length} Evaluated Competencies</span>
         </div>
 
         {/* Multi-segment Bar */}
-        <div className="h-3 w-full rounded-full bg-slate-800 overflow-hidden flex">
+        <div className="h-3 w-full rounded-full bg-[#E7E5E4] overflow-hidden flex">
           {strong.length > 0 && (
             <div
               style={{ width: `${(strong.length / skills.length) * 100}%` }}
-              className="bg-emerald-500 h-full transition-all duration-500"
+              className="bg-[#16A34A] h-full transition-all duration-500"
               title={`Strong: ${strong.length}`}
             />
           )}
           {moderate.length > 0 && (
             <div
               style={{ width: `${(moderate.length / skills.length) * 100}%` }}
-              className="bg-blue-500 h-full transition-all duration-500"
+              className="bg-[#F97316] h-full transition-all duration-500"
               title={`Moderate: ${moderate.length}`}
             />
           )}
           {weak.length > 0 && (
             <div
               style={{ width: `${(weak.length / skills.length) * 100}%` }}
-              className="bg-amber-500 h-full transition-all duration-500"
+              className="bg-[#D97706] h-full transition-all duration-500"
               title={`Weak: ${weak.length}`}
             />
           )}
           {notDemonstrated.length > 0 && (
             <div
               style={{ width: `${(notDemonstrated.length / skills.length) * 100}%` }}
-              className="bg-rose-500 h-full transition-all duration-500"
+              className="bg-[#DC2626] h-full transition-all duration-500"
               title={`Not Demonstrated: ${notDemonstrated.length}`}
             />
           )}
@@ -92,20 +96,20 @@ export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = (
 
         {/* Legend */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-xs">
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+          <div className="flex items-center gap-2 text-[#1C1917]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] shrink-0" />
             <span>Strong ({strong.length})</span>
           </div>
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0" />
+          <div className="flex items-center gap-2 text-[#1C1917]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#F97316] shrink-0" />
             <span>Moderate ({moderate.length})</span>
           </div>
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+          <div className="flex items-center gap-2 text-[#1C1917]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#D97706] shrink-0" />
             <span>Weak ({weak.length})</span>
           </div>
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
+          <div className="flex items-center gap-2 text-[#1C1917]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626] shrink-0" />
             <span>Missing ({notDemonstrated.length})</span>
           </div>
         </div>
@@ -120,47 +124,47 @@ export const EvidenceAnalysisCard: React.FC<{ skills: SkillAnalysisItem[] }> = (
           return (
             <div
               key={cat.level}
-              className="rounded-xl border border-slate-800/80 bg-slate-900/30 overflow-hidden transition"
+              className="rounded-2xl border border-[#E7E5E4] bg-white overflow-hidden transition shadow-sm"
             >
               <button
                 onClick={() => setExpandedLevel(isExpanded ? null : cat.level)}
-                className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-900/60 transition"
+                className="w-full p-4 flex items-center justify-between text-left hover:bg-[#FAFAFA] transition cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg ${cat.bgColor}/15 flex items-center justify-center`}>
-                    <Icon className={`w-4 h-4 text-${cat.color}-400`} />
+                  <div className={`w-8 h-8 rounded-lg ${cat.bgColor} flex items-center justify-center`}>
+                    <Icon className={`w-4 h-4 ${cat.textColor}`} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-slate-100">{cat.level} Evidence</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300">
+                      <span className="font-bold text-sm text-[#1C1917]">{cat.level} Evidence</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#F5F5F4] text-[#1C1917] border border-[#E7E5E4]">
                         {cat.count}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5">{cat.description}</p>
+                    <p className="text-xs text-[#78716C] mt-0.5">{cat.description}</p>
                   </div>
                 </div>
-                {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                {isExpanded ? <ChevronUp className="w-4 h-4 text-[#78716C]" /> : <ChevronDown className="w-4 h-4 text-[#78716C]" />}
               </button>
 
               {isExpanded && (
-                <div className="p-4 pt-0 space-y-2 border-t border-slate-800/50">
+                <div className="p-4 pt-0 space-y-2 border-t border-[#E7E5E4]">
                   {cat.items.length === 0 ? (
-                    <p className="text-xs text-slate-500 italic py-2">No skills in this category.</p>
+                    <p className="text-xs text-[#78716C] italic py-2">No skills in this category.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
                       {cat.items.map((item, i) => (
-                        <div key={i} className="p-3 rounded-lg bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-                          <div className="flex items-center justify-between text-xs font-semibold text-slate-200">
+                        <div key={i} className="p-3 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] space-y-1.5">
+                          <div className="flex items-center justify-between text-xs font-semibold text-[#1C1917]">
                             <span>{item.skill}</span>
-                            <span className="text-[10px] text-slate-500">{item.importance}</span>
+                            <span className="text-[10px] text-[#78716C]">{item.importance}</span>
                           </div>
                           {item.matchedResumeText ? (
-                            <p className="text-[11px] italic text-slate-400 bg-slate-900/80 p-2 rounded border-l border-blue-500/50 line-clamp-2">
+                            <p className="text-[11px] italic text-[#1C1917] bg-white p-2.5 rounded-lg border-l-2 border-[#F97316] line-clamp-2">
                               "{item.matchedResumeText}"
                             </p>
                           ) : (
-                            <p className="text-[11px] text-slate-500 italic">No supporting project or bullet citation found.</p>
+                            <p className="text-[11px] text-[#78716C] italic">No supporting project or bullet citation found.</p>
                           )}
                         </div>
                       ))}

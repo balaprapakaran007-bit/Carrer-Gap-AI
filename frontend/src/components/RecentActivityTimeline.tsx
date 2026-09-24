@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  CheckCircle2, Sparkles, AlertTriangle, FileText, Layers, Clock, Filter
+  CheckCircle2, Sparkles, AlertTriangle, Clock
 } from 'lucide-react';
 
 interface ActivityItem {
@@ -62,22 +62,22 @@ export const RecentActivityTimeline: React.FC = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle2 className="w-4 h-4 text-emerald-400" />;
-      case 'gap': return <AlertTriangle className="w-4 h-4 text-amber-400" />;
-      default: return <Sparkles className="w-4 h-4 text-blue-400" />;
+      case 'completed': return <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />;
+      case 'gap': return <AlertTriangle className="w-4 h-4 text-[#D97706]" />;
+      default: return <Sparkles className="w-4 h-4 text-[#F97316]" />;
     }
   };
 
   return (
-    <div className="p-6 rounded-3xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-6 shadow-xl">
+    <div className="p-6 rounded-3xl border border-[#E7E5E4] bg-white space-y-6 shadow-sm">
       
       {/* Header & Category Filters */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-slate-800/60">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#E7E5E4]">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#F97316]">
             Activity Audit
           </span>
-          <h3 className="text-base font-bold text-white mt-0.5">Recent Career Activity</h3>
+          <h3 className="text-base font-bold text-[#1C1917] mt-0.5">Recent Career Activity</h3>
         </div>
 
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
@@ -87,8 +87,8 @@ export const RecentActivityTimeline: React.FC = () => {
               onClick={() => setFilter(cat)}
               className={`px-2.5 py-1 rounded-xl text-[11px] font-bold capitalize transition cursor-pointer ${
                 filter === cat
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
+                  ? 'bg-[#F97316] text-white shadow-sm'
+                  : 'bg-[#FAFAFA] text-[#78716C] hover:text-[#1C1917] border border-[#E7E5E4]'
               }`}
             >
               {cat}
@@ -98,25 +98,21 @@ export const RecentActivityTimeline: React.FC = () => {
       </div>
 
       {/* Timeline List */}
-      <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-800">
+      <div className="space-y-4">
         {filtered.map((item) => (
-          <div key={item.id} className="relative group">
-            {/* Timeline node */}
-            <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-slate-950 border border-slate-700 flex items-center justify-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+          <div key={item.id} className="flex items-start gap-3.5 p-3 rounded-2xl hover:bg-[#FAFAFA] transition">
+            <div className="mt-0.5 p-2 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] shrink-0">
+              {getStatusIcon(item.status)}
             </div>
-
-            <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  {getStatusIcon(item.status)}
-                  <span className="font-bold text-slate-100">{item.title}</span>
-                </div>
-                <span className="text-[10px] text-slate-500">{item.time}</span>
+            <div className="flex-1 min-w-0 space-y-0.5">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="text-xs font-bold text-[#1C1917] truncate">{item.title}</h4>
+                <span className="text-[10px] text-[#78716C] shrink-0 flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  <span>{item.time}</span>
+                </span>
               </div>
-              <p className="text-xs text-slate-400 pl-6 leading-relaxed">
-                {item.desc}
-              </p>
+              <p className="text-xs text-[#78716C] leading-relaxed">{item.desc}</p>
             </div>
           </div>
         ))}

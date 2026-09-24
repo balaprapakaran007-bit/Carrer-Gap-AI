@@ -59,10 +59,10 @@ export const Navbar: React.FC<{ toggleSidebar?: () => void; isSidebarOpen?: bool
   const unreadNotificationsCount = notifications.filter(n => !n.read).length;
 
   const presetThemes = [
+    { id: 'sunset', name: 'Warm Orange', color: '#F97316' },
     { id: 'ocean', name: 'Ocean Blue', color: '#2563EB' },
     { id: 'emerald', name: 'Emerald', color: '#10B981' },
     { id: 'violet', name: 'Violet', color: '#7C3AED' },
-    { id: 'sunset', name: 'Sunset Orange', color: '#F97316' },
     { id: 'rose', name: 'Rose', color: '#E11D48' },
     { id: 'cyan', name: 'Cyan', color: '#06B6D4' },
     { id: 'indigo', name: 'Indigo', color: '#4F46E5' },

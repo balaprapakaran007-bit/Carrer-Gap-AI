@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDashboard } from '../context/DashboardContext';
 import { useTheme, PRESET_THEMES } from '../context/ThemeContext';
 import {
   Search, Sparkles, LayoutDashboard, MapPin, Mic, Layers, BarChart3,
-  Moon, Sun, Palette, ArrowRight, FileText, X, Check
+  Moon, Sun, Palette
 } from 'lucide-react';
 
 export const CommandPalette: React.FC = () => {
@@ -72,26 +72,26 @@ export const CommandPalette: React.FC = () => {
       {/* Backdrop */}
       <div
         onClick={() => setIsCommandPaletteOpen(false)}
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
       />
 
       {/* Palette Box */}
       <div
         onKeyDown={handleKeyDown}
-        className="relative w-full max-w-xl rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl overflow-hidden z-10 flex flex-col max-h-[75vh]"
+        className="relative w-full max-w-xl rounded-2xl border border-[#E7E5E4] bg-white shadow-2xl overflow-hidden z-10 flex flex-col max-h-[75vh]"
       >
         {/* Search Input */}
-        <div className="flex items-center px-4 py-3.5 border-b border-slate-800 bg-slate-900/50">
-          <Search className="w-5 h-5 text-slate-400 mr-3 shrink-0" />
+        <div className="flex items-center px-4 py-3.5 border-b border-[#E7E5E4] bg-[#FAFAFA]">
+          <Search className="w-5 h-5 text-[#78716C] mr-3 shrink-0" />
           <input
             autoFocus
             type="text"
             value={query}
             onChange={(e) => { setQuery(e.target.value); setSelectedIdx(0); }}
             placeholder="Type a command or search (e.g. analyze, theme, roadmap)..."
-            className="w-full bg-transparent text-sm text-slate-100 placeholder-slate-500 focus:outline-none"
+            className="w-full bg-transparent text-sm text-[#1C1917] placeholder-[#78716C] focus:outline-none"
           />
-          <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono rounded bg-slate-800 text-slate-400 border border-slate-700">
+          <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono rounded bg-white text-[#78716C] border border-[#E7E5E4]">
             ESC
           </kbd>
         </div>
@@ -99,8 +99,8 @@ export const CommandPalette: React.FC = () => {
         {/* Results List */}
         <div className="overflow-y-auto p-2 space-y-1">
           {filtered.length === 0 ? (
-            <div className="py-8 text-center text-xs text-slate-500">
-              No matching commands or pages found.
+            <div className="p-8 text-center text-xs text-[#78716C]">
+              No commands matching "{query}"
             </div>
           ) : (
             filtered.map((item, idx) => {
@@ -112,17 +112,17 @@ export const CommandPalette: React.FC = () => {
                   key={item.id}
                   onClick={() => handleSelect(idx)}
                   onMouseEnter={() => setSelectedIdx(idx)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-600/15 text-blue-300 border border-blue-500/30'
-                      : 'text-slate-300 hover:bg-slate-900/60 border border-transparent'
+                      ? 'bg-[#FFF3E8] text-[#F97316] font-semibold border border-[#F97316]/30'
+                      : 'text-[#1C1917] hover:bg-[#FAFAFA]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="w-4 h-4 text-slate-400" />
-                    <span className="font-semibold">{item.label}</span>
+                    <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-[#F97316]' : 'text-[#78716C]'}`} />
+                    <span>{item.label}</span>
                   </div>
-                  <span className="text-[10px] text-slate-500 font-medium px-2 py-0.5 rounded bg-slate-900">
+                  <span className="text-[10px] text-[#78716C] capitalize bg-[#FAFAFA] px-2 py-0.5 rounded border border-[#E7E5E4]">
                     {item.category}
                   </span>
                 </button>
@@ -131,14 +131,10 @@ export const CommandPalette: React.FC = () => {
           )}
         </div>
 
-        {/* Footer shortcuts */}
-        <div className="px-4 py-2 border-t border-slate-800/80 bg-slate-950 flex items-center justify-between text-[11px] text-slate-500">
-          <div className="flex items-center gap-2">
-            <span>Use ↑↓ to navigate</span>
-            <span>•</span>
-            <span>↵ to select</span>
-          </div>
-          <span>CareerGap AI Command Center</span>
+        {/* Footer info */}
+        <div className="p-3 border-t border-[#E7E5E4] bg-[#FAFAFA] flex items-center justify-between text-[11px] text-[#78716C]">
+          <span>Navigate with ↑ ↓ and Enter</span>
+          <span>CareerGap AI Quick Actions</span>
         </div>
       </div>
     </div>

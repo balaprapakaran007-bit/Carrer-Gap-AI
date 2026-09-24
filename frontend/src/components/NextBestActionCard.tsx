@@ -4,8 +4,6 @@ import { Sparkles, ArrowRight, Zap, Clock, TrendingUp, ChevronDown, ChevronUp, H
 import { useTheme } from '../context/ThemeContext';
 
 export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysisId = 'demo-analysis-ml-01' }) => {
-  const { activeHex } = useTheme();
-
   const actions = [
     {
       id: 'action-1',
@@ -42,22 +40,16 @@ export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysis
   const currentAction = actions[activeIdx];
 
   return (
-    <div className="p-6 rounded-3xl border border-blue-500/30 bg-gradient-to-br from-blue-950/30 via-slate-900/90 to-slate-900/90 backdrop-blur-xl shadow-2xl space-y-6 relative overflow-hidden">
+    <div className="p-6 rounded-3xl border border-[#E7E5E4] bg-white shadow-sm space-y-6 relative overflow-hidden">
       
-      {/* Glow Effect */}
-      <div
-        className="absolute -top-12 -right-12 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none"
-        style={{ backgroundColor: activeHex }}
-      />
-
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-          <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+      <div className="flex items-center justify-between pb-3 border-b border-[#E7E5E4]">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-[#F97316] flex items-center gap-1.5">
+          <Zap className="w-4 h-4 text-[#F97316] fill-[#F97316]" />
           <span>Your Next Best Action</span>
         </span>
 
-        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+        <span className="text-xs font-bold text-[#16A34A] bg-[#DCFCE7] px-2.5 py-0.5 rounded-full border border-[#16A34A]/20">
           High Impact
         </span>
       </div>
@@ -65,23 +57,23 @@ export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysis
       {/* Main Recommended Action */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold text-white leading-snug">
+          <h2 className="text-xl font-bold text-[#1C1917] leading-snug">
             {currentAction.title}
           </h2>
-          <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+          <p className="text-xs text-[#78716C] mt-2 leading-relaxed">
             {currentAction.why}
           </p>
         </div>
 
         {/* Impact & Time Pills */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="px-3 py-1.5 rounded-xl bg-blue-500/15 border border-blue-500/25 text-blue-300 text-xs font-bold flex items-center gap-1.5">
+          <div className="px-3 py-1.5 rounded-xl bg-[#FFF3E8] border border-[#F97316]/25 text-[#F97316] text-xs font-bold flex items-center gap-1.5">
             <TrendingUp className="w-3.5 h-3.5" />
             <span>Impact: {currentAction.impact}</span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 text-xs font-semibold flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-slate-400" />
+          <div className="px-3 py-1.5 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-[#78716C] text-xs font-semibold flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-[#78716C]" />
             <span>Effort: {currentAction.estimatedTime}</span>
           </div>
         </div>
@@ -89,8 +81,7 @@ export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysis
         {/* Action Button */}
         <Link
           to={currentAction.link}
-          className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-white text-xs font-bold shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-0.5"
-          style={{ backgroundColor: activeHex }}
+          className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-white text-xs font-bold bg-[#F97316] hover:bg-[#EA580C] shadow-md shadow-[#F97316]/20 transition transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
         >
           <span>Start Learning & Build Milestone</span>
           <ArrowRight className="w-4 h-4" />
@@ -98,8 +89,8 @@ export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysis
       </div>
 
       {/* Alternatives Switcher */}
-      <div className="pt-3 border-t border-slate-800/80 space-y-2">
-        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+      <div className="pt-3 border-t border-[#E7E5E4] space-y-2">
+        <span className="text-[11px] font-bold text-[#78716C] uppercase tracking-wider block">
           Or Choose An Alternative Path:
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -109,10 +100,10 @@ export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysis
               <button
                 key={act.id}
                 onClick={() => setActiveIdx(idx)}
-                className="p-2.5 rounded-xl bg-slate-950/80 hover:bg-slate-900 border border-slate-800 text-left text-xs text-slate-300 hover:text-white transition flex items-center justify-between"
+                className="p-2.5 rounded-xl bg-[#FAFAFA] hover:bg-[#F5F5F4] border border-[#E7E5E4] text-left text-xs text-[#1C1917] transition flex items-center justify-between cursor-pointer"
               >
                 <span className="truncate max-w-[200px]">{act.title}</span>
-                <span className="text-[10px] text-blue-400 font-bold shrink-0 ml-1">Swap ↵</span>
+                <span className="text-[10px] text-[#F97316] font-bold shrink-0 ml-1">Swap ↵</span>
               </button>
             );
           })}
@@ -123,7 +114,7 @@ export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysis
       <div className="pt-1">
         <button
           onClick={() => setShowHistory(!showHistory)}
-          className="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 font-semibold transition"
+          className="text-[11px] text-[#78716C] hover:text-[#1C1917] flex items-center gap-1 font-semibold transition cursor-pointer"
         >
           <History className="w-3.5 h-3.5" />
           <span>{showHistory ? 'Hide Recommendation History' : 'View Recommendation History'}</span>
@@ -131,19 +122,19 @@ export const NextBestActionCard: React.FC<{ analysisId?: string }> = ({ analysis
         </button>
 
         {showHistory && (
-          <div className="mt-3 p-3 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2 text-xs">
-            <div className="flex items-center justify-between text-slate-300 pb-1 border-b border-slate-800/60">
-              <span className="flex items-center gap-1.5 text-emerald-400">
+          <div className="mt-3 p-3 rounded-2xl bg-[#FAFAFA] border border-[#E7E5E4] space-y-2 text-xs">
+            <div className="flex items-center justify-between text-[#1C1917] pb-1 border-b border-[#E7E5E4]">
+              <span className="flex items-center gap-1.5 text-[#16A34A] font-medium">
                 <Check className="w-3.5 h-3.5" />
                 <span>PyTorch Model Pipeline Optimization</span>
               </span>
-              <span className="text-[10px] text-slate-500">Completed (+14 pts)</span>
+              <span className="text-[10px] text-[#78716C]">Completed (+14 pts)</span>
             </div>
-            <div className="flex items-center justify-between text-slate-300">
-              <span className="flex items-center gap-1.5 text-blue-400">
+            <div className="flex items-center justify-between text-[#1C1917]">
+              <span className="flex items-center gap-1.5 text-[#F97316] font-medium">
                 <span>RAG Semantic Search Ingestion</span>
               </span>
-              <span className="text-[10px] text-slate-500">Completed (+8 pts)</span>
+              <span className="text-[10px] text-[#78716C]">Completed (+8 pts)</span>
             </div>
           </div>
         )}

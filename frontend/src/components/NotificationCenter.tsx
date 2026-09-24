@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDashboard } from '../context/DashboardContext';
 import { Link } from 'react-router-dom';
-import { Bell, Check, X, Flame, MapPin, Sparkles, Info, ExternalLink } from 'lucide-react';
+import { Bell, X, Flame, MapPin, Sparkles, Info, ExternalLink } from 'lucide-react';
 
 export const NotificationCenter: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const { notifications, unreadCount, markAllNotificationsRead, dismissNotification } = useDashboard();
@@ -10,23 +10,23 @@ export const NotificationCenter: React.FC<{ isOpen: boolean; onClose: () => void
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'streak': return <Flame className="w-4 h-4 text-amber-400" />;
-      case 'milestone': return <MapPin className="w-4 h-4 text-blue-400" />;
-      case 'analysis': return <Sparkles className="w-4 h-4 text-emerald-400" />;
-      default: return <Info className="w-4 h-4 text-purple-400" />;
+      case 'streak': return <Flame className="w-4 h-4 text-[#F97316]" />;
+      case 'milestone': return <MapPin className="w-4 h-4 text-[#F97316]" />;
+      case 'analysis': return <Sparkles className="w-4 h-4 text-[#16A34A]" />;
+      default: return <Info className="w-4 h-4 text-[#78716C]" />;
     }
   };
 
   return (
-    <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-slate-800 bg-slate-950/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
+    <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-[#E7E5E4] bg-white shadow-xl z-50 overflow-hidden">
       
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-900/50">
+      <div className="flex items-center justify-between p-4 border-b border-[#E7E5E4] bg-[#FAFAFA]">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-blue-400" />
-          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Notifications</h4>
+          <Bell className="w-4 h-4 text-[#F97316]" />
+          <h4 className="text-xs font-bold text-[#1C1917] uppercase tracking-wider">Notifications</h4>
           {unreadCount > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-blue-600 text-white text-[10px] font-bold">
+            <span className="px-1.5 py-0.5 rounded-full bg-[#F97316] text-white text-[10px] font-bold">
               {unreadCount}
             </span>
           )}
@@ -35,7 +35,7 @@ export const NotificationCenter: React.FC<{ isOpen: boolean; onClose: () => void
         {unreadCount > 0 && (
           <button
             onClick={markAllNotificationsRead}
-            className="text-[11px] text-blue-400 hover:text-blue-300 font-semibold transition"
+            className="text-[11px] text-[#F97316] hover:text-[#EA580C] font-semibold transition cursor-pointer"
           >
             Mark all read
           </button>
@@ -43,9 +43,9 @@ export const NotificationCenter: React.FC<{ isOpen: boolean; onClose: () => void
       </div>
 
       {/* Notifications List */}
-      <div className="max-h-80 overflow-y-auto divide-y divide-slate-850 p-1">
+      <div className="max-h-80 overflow-y-auto divide-y divide-[#E7E5E4] p-1">
         {notifications.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-500">
+          <div className="py-8 text-center text-xs text-[#78716C]">
             No active notifications. You're all caught up!
           </div>
         ) : (
@@ -53,24 +53,24 @@ export const NotificationCenter: React.FC<{ isOpen: boolean; onClose: () => void
             <div
               key={notif.id}
               className={`p-3.5 rounded-xl transition flex items-start justify-between gap-3 ${
-                notif.isRead ? 'opacity-70 hover:opacity-100 hover:bg-slate-900/40' : 'bg-slate-900/50 hover:bg-slate-900/80'
+                notif.read ? 'opacity-70 hover:opacity-100 hover:bg-[#FAFAFA]' : 'bg-[#FFF3E8]/40 hover:bg-[#FFF3E8]/70'
               }`}
             >
               <div className="flex items-start gap-3">
-                <div className="mt-0.5 p-2 rounded-lg bg-slate-900 border border-slate-800 shrink-0">
+                <div className="mt-0.5 p-2 rounded-lg bg-white border border-[#E7E5E4] shrink-0 shadow-sm">
                   {getIcon(notif.type)}
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h5 className="text-xs font-bold text-slate-100">{notif.title}</h5>
-                    <span className="text-[10px] text-slate-500">{notif.timestamp}</span>
+                    <h5 className="text-xs font-bold text-[#1C1917]">{notif.title}</h5>
+                    <span className="text-[10px] text-[#78716C]">{notif.timestamp}</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">{notif.message}</p>
+                  <p className="text-xs text-[#78716C] leading-relaxed">{notif.message}</p>
                   {notif.link && (
                     <Link
                       to={notif.link}
                       onClick={onClose}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-400 hover:text-blue-300 pt-1"
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#F97316] hover:text-[#EA580C] pt-1"
                     >
                       <span>View details</span>
                       <ExternalLink className="w-3 h-3" />
@@ -81,7 +81,7 @@ export const NotificationCenter: React.FC<{ isOpen: boolean; onClose: () => void
 
               <button
                 onClick={() => dismissNotification(notif.id)}
-                className="p-1 rounded text-slate-500 hover:text-slate-300 transition shrink-0"
+                className="p-1 rounded text-[#78716C] hover:text-[#1C1917] transition shrink-0 cursor-pointer"
                 title="Dismiss"
               >
                 <X className="w-3.5 h-3.5" />
@@ -92,8 +92,8 @@ export const NotificationCenter: React.FC<{ isOpen: boolean; onClose: () => void
       </div>
 
       {/* Footer */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-950 text-center">
-        <span className="text-[11px] text-slate-500">Milestone reminders and streak alerts</span>
+      <div className="p-3 border-t border-[#E7E5E4] bg-[#FAFAFA] text-center">
+        <span className="text-[11px] text-[#78716C]">Milestone reminders and streak alerts</span>
       </div>
     </div>
   );

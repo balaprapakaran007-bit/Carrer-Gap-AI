@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceDot } from 'recharts';
-import { useTheme } from '../context/ThemeContext';
-import { TrendingUp, Layers, CheckCircle2 } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { Layers, CheckCircle2 } from 'lucide-react';
 
 export const CareerProgressChart: React.FC = () => {
-  const { activeHex } = useTheme();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
   const [showSecondaryRole, setShowSecondaryRole] = useState(true);
 
@@ -33,26 +31,26 @@ export const CareerProgressChart: React.FC = () => {
   const chartData = timeRange === '7d' ? data7d : timeRange === '90d' ? data90d : data30d;
 
   return (
-    <div className="p-6 rounded-3xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-6 shadow-xl">
+    <div className="p-6 rounded-3xl border border-[#E7E5E4] bg-white space-y-6 shadow-sm">
       
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-slate-800/60">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#E7E5E4]">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#F97316]">
             Longitudinal Growth
           </span>
-          <h3 className="text-base font-bold text-white mt-0.5">Job Readiness Progression</h3>
+          <h3 className="text-base font-bold text-[#1C1917] mt-0.5">Job Readiness Progression</h3>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Time Range Selector */}
-          <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-bold">
+          <div className="flex items-center gap-1 bg-[#FAFAFA] p-1 rounded-xl border border-[#E7E5E4] text-[11px] font-bold">
             {(['7d', '30d', '90d'] as const).map(t => (
               <button
                 key={t}
                 onClick={() => setTimeRange(t)}
                 className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
-                  timeRange === t ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                  timeRange === t ? 'bg-[#F97316] text-white shadow-sm' : 'text-[#78716C] hover:text-[#1C1917]'
                 }`}
               >
                 {t.toUpperCase()}
@@ -65,8 +63,8 @@ export const CareerProgressChart: React.FC = () => {
             onClick={() => setShowSecondaryRole(!showSecondaryRole)}
             className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-semibold flex items-center gap-1.5 transition cursor-pointer ${
               showSecondaryRole
-                ? 'bg-[#06D6FF]/15 border-[#06D6FF]/30 text-[#06D6FF]'
-                : 'bg-slate-950 border-slate-800 text-slate-500'
+                ? 'bg-[#FFF3E8] border-[#F97316]/30 text-[#F97316]'
+                : 'bg-white border-[#E7E5E4] text-[#78716C]'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -79,22 +77,22 @@ export const CareerProgressChart: React.FC = () => {
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 15, right: 25, left: -15, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-            <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-            <YAxis domain={[40, 100]} tick={{ fill: '#64748b', fontSize: 11 }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E7E5E4" vertical={false} />
+            <XAxis dataKey="date" tick={{ fill: '#78716C', fontSize: 11 }} />
+            <YAxis domain={[40, 100]} tick={{ fill: '#78716C', fontSize: 11 }} />
             <Tooltip
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
                   const pData = payload[0].payload;
                   return (
-                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 shadow-xl space-y-1 text-xs">
-                      <p className="font-bold text-slate-200">{label}</p>
-                      <p className="font-bold text-blue-400">ML Engineer: {pData.readiness}%</p>
+                    <div className="p-3 rounded-xl bg-white border border-[#E7E5E4] shadow-lg space-y-1 text-xs">
+                      <p className="font-bold text-[#1C1917]">{label}</p>
+                      <p className="font-bold text-[#F97316]">ML Engineer: {pData.readiness}%</p>
                       {showSecondaryRole && (
-                        <p className="text-[#06D6FF] font-semibold">AI Platform: {pData.secondary}%</p>
+                        <p className="text-[#78716C] font-semibold">AI Platform: {pData.secondary}%</p>
                       )}
                       {pData.milestone && (
-                        <p className="text-emerald-400 text-[10px] pt-1 border-t border-slate-800 flex items-center gap-1">
+                        <p className="text-[#16A34A] text-[10px] pt-1 border-t border-[#E7E5E4] flex items-center gap-1">
                           <span>★ {pData.milestone}</span>
                         </p>
                       )}
@@ -109,10 +107,10 @@ export const CareerProgressChart: React.FC = () => {
             <Line
               type="monotone"
               dataKey="readiness"
-              stroke={activeHex}
+              stroke="#F97316"
               strokeWidth={3}
-              dot={{ fill: activeHex, r: 4, strokeWidth: 2, stroke: '#0f172a' }}
-              activeDot={{ r: 7 }}
+              dot={{ fill: '#F97316', r: 4, strokeWidth: 2, stroke: '#FFFFFF' }}
+              activeDot={{ r: 6 }}
             />
 
             {/* Secondary Role Overlay Line */}
@@ -120,10 +118,10 @@ export const CareerProgressChart: React.FC = () => {
               <Line
                 type="monotone"
                 dataKey="secondary"
-                stroke="#06D6FF"
+                stroke="#A8A29E"
                 strokeWidth={2}
                 strokeDasharray="4 4"
-                dot={{ fill: '#06D6FF', r: 3 }}
+                dot={{ fill: '#A8A29E', r: 3 }}
               />
             )}
           </LineChart>
@@ -131,22 +129,22 @@ export const CareerProgressChart: React.FC = () => {
       </div>
 
       {/* Legend & Milestone Annotations */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800/60 text-xs text-slate-400">
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#E7E5E4] text-xs text-[#78716C]">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: activeHex }} />
-            <span className="font-semibold text-slate-200">ML Engineer (Active Target)</span>
+            <span className="w-3 h-0.5 rounded-full bg-[#F97316]" />
+            <span className="font-semibold text-[#1C1917]">ML Engineer (Active Target)</span>
           </div>
           {showSecondaryRole && (
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 rounded-full bg-[#06D6FF]" />
-              <span className="text-[#06D6FF]">AI Platform Engineer</span>
+              <span className="w-3 h-0.5 rounded-full bg-[#A8A29E]" />
+              <span className="text-[#78716C]">AI Platform Engineer</span>
             </div>
           )}
         </div>
 
-        <span className="text-[11px] text-slate-500 flex items-center gap-1">
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+        <span className="text-[11px] text-[#78716C] flex items-center gap-1">
+          <CheckCircle2 className="w-3.5 h-3.5 text-[#16A34A]" />
           <span>Milestone dots indicate verified completed roadmap steps</span>
         </span>
       </div>

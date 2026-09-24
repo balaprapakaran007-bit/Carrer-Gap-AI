@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import {
-  Upload, FileText, Globe, Sparkles, Check, Loader2, ArrowRight,
-  AlertCircle, CheckCircle2, RefreshCw, FileCode
+  Upload, FileText, Globe, Sparkles, Check, Loader2,
+  AlertCircle, CheckCircle2, RefreshCw
 } from 'lucide-react';
 
 export const AnalyzePage: React.FC = () => {
@@ -157,22 +157,22 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 selection:bg-blue-500 selection:text-white">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 selection:bg-[#F97316] selection:text-white bg-white">
       
       {/* Header */}
       <div>
-        <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400">Analysis Engine</span>
-        <h1 className="text-2xl sm:text-3xl font-black text-white mt-0.5">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-[#F97316]">Analysis Engine</span>
+        <h1 className="text-2xl sm:text-3xl font-black text-[#1C1917] mt-0.5">
           AI Career Gap & Compatibility Analysis
         </h1>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-[#78716C] mt-1">
           Upload your resume and input the target job description to discover exact gaps and your custom roadmap.
         </p>
       </div>
 
       {errorMsg && (
-        <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-xs text-red-300 flex items-center gap-3">
-          <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+        <div className="p-4 rounded-2xl bg-[#FEE2E2] border border-[#DC2626]/20 text-xs text-[#DC2626] flex items-center gap-3">
+          <AlertCircle className="w-4 h-4 text-[#DC2626] shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
@@ -181,23 +181,23 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* LEFT COLUMN: Resume Ingestion */}
-        <div className="p-6 rounded-3xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md flex flex-col justify-between space-y-6">
+        <div className="p-6 rounded-3xl border border-[#E7E5E4] bg-white shadow-sm flex flex-col justify-between space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-blue-400" />
+            <div className="flex items-center justify-between pb-3 border-b border-[#E7E5E4]">
+              <h3 className="text-sm font-bold text-[#1C1917] flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#F97316]" />
                 <span>1. Candidate Resume</span>
               </h3>
               <button
                 onClick={handleLoadDemoResume}
-                className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition"
+                className="text-xs font-semibold text-[#F97316] hover:text-[#EA580C] transition cursor-pointer"
               >
                 Use Demo ML Resume
               </button>
             </div>
 
             {/* Upload Area */}
-            <div className="relative border-2 border-dashed border-slate-700 hover:border-blue-500/60 rounded-2xl p-8 text-center transition bg-slate-950/40 group">
+            <div className="relative border-2 border-dashed border-[#E7E5E4] hover:border-[#F97316] rounded-2xl p-8 text-center transition bg-[#FAFAFA] group">
               <input
                 type="file"
                 accept=".pdf,.txt,.docx"
@@ -205,60 +205,60 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
               />
               <div className="space-y-3 pointer-events-none">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mx-auto group-hover:scale-110 transition">
+                <div className="w-12 h-12 rounded-2xl bg-[#FFF3E8] border border-[#F97316]/20 flex items-center justify-center text-[#F97316] mx-auto group-hover:scale-105 transition">
                   <Upload className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-slate-200">
+                  <p className="text-xs font-bold text-[#1C1917]">
                     {resumeFileName ? resumeFileName : 'Drop your PDF Resume here or click to browse'}
                   </p>
-                  <p className="text-[11px] text-slate-500 mt-1">Supports text-based PDF, DOCX, TXT</p>
+                  <p className="text-[11px] text-[#78716C] mt-1">Supports text-based PDF, DOCX, TXT</p>
                 </div>
               </div>
             </div>
 
             {/* Upload Confirmation */}
             {resumeUploaded && (
-              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between text-xs text-emerald-300">
+              <div className="p-3.5 rounded-xl bg-[#DCFCE7] border border-[#16A34A]/20 flex items-center justify-between text-xs text-[#16A34A]">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-[#16A34A]" />
                   <span className="font-semibold">{resumeFileName || 'Resume.pdf'} Ready for Analysis</span>
                 </div>
-                <span className="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-300 font-bold">
+                <span className="text-[10px] bg-white px-2 py-0.5 rounded text-[#16A34A] font-bold border border-[#16A34A]/20">
                   Parsed ✓
                 </span>
               </div>
             )}
           </div>
 
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-[#78716C]">
             Privacy Guarantee: Resumes are analyzed securely and never shared with third parties without explicit opt-in.
           </p>
         </div>
 
         {/* RIGHT COLUMN: Job Description Input */}
-        <div className="p-6 rounded-3xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-6">
+        <div className="p-6 rounded-3xl border border-[#E7E5E4] bg-white shadow-sm space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Globe className="w-4 h-4 text-indigo-400" />
+            <div className="flex items-center justify-between pb-3 border-b border-[#E7E5E4]">
+              <h3 className="text-sm font-bold text-[#1C1917] flex items-center gap-2">
+                <Globe className="w-4 h-4 text-[#F97316]" />
                 <span>2. Job Description</span>
               </h3>
 
               {/* Tabs */}
-              <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px]">
+              <div className="flex items-center gap-1 bg-[#FAFAFA] p-1 rounded-xl border border-[#E7E5E4] text-[11px]">
                 <button
                   onClick={() => setJobInputMode('paste')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition ${
-                    jobInputMode === 'paste' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200'
+                  className={`px-2.5 py-1 rounded-lg font-semibold transition cursor-pointer ${
+                    jobInputMode === 'paste' ? 'bg-[#F97316] text-white' : 'text-[#78716C] hover:text-[#1C1917]'
                   }`}
                 >
                   Paste Text
                 </button>
                 <button
                   onClick={() => setJobInputMode('url')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition ${
-                    jobInputMode === 'url' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-slate-200'
+                  className={`px-2.5 py-1 rounded-lg font-semibold transition cursor-pointer ${
+                    jobInputMode === 'url' ? 'bg-[#F97316] text-white' : 'text-[#78716C] hover:text-[#1C1917]'
                   }`}
                 >
                   Import URL
@@ -269,23 +269,23 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
             {/* Inputs: Role Title & Company */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-semibold text-slate-400 block mb-1">Target Role Title</label>
+                <label className="text-[11px] font-semibold text-[#78716C] block mb-1">Target Role Title</label>
                 <input
                   type="text"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
                   placeholder="e.g. Machine Learning Engineer"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] focus:outline-none focus:border-[#F97316] focus:bg-white transition"
                 />
               </div>
               <div>
-                <label className="text-[11px] font-semibold text-slate-400 block mb-1">Target Company</label>
+                <label className="text-[11px] font-semibold text-[#78716C] block mb-1">Target Company</label>
                 <input
                   type="text"
                   value={jobCompany}
                   onChange={(e) => setJobCompany(e.target.value)}
                   placeholder="e.g. AI Nexus Corp"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] focus:outline-none focus:border-[#F97316] focus:bg-white transition"
                 />
               </div>
             </div>
@@ -299,12 +299,12 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
                     value={jobUrl}
                     onChange={(e) => setJobUrl(e.target.value)}
                     placeholder="https://linkedin.com/jobs/view/... or greenhouse.io/..."
-                    className="flex-1 px-3 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
+                    className="flex-1 px-3 py-2.5 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] focus:outline-none focus:border-[#F97316]"
                   />
                   <button
                     onClick={handleFetchUrl}
                     disabled={isFetchingUrl || !jobUrl}
-                    className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5"
+                    className="px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#EA580C] disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
                   >
                     {isFetchingUrl ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Globe className="w-3.5 h-3.5" />}
                     <span>Fetch</span>
@@ -315,7 +315,7 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
                   value={jobText}
                   onChange={(e) => setJobText(e.target.value)}
                   placeholder="Extracted job description will appear here for confirmation..."
-                  className="w-full p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-300 font-mono focus:outline-none focus:border-blue-500"
+                  className="w-full p-3 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] font-mono focus:outline-none focus:border-[#F97316]"
                 />
               </div>
             ) : (
@@ -324,7 +324,7 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
                 value={jobText}
                 onChange={(e) => setJobText(e.target.value)}
                 placeholder="Paste the full job posting requirements and responsibilities..."
-                className="w-full p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-300 font-mono focus:outline-none focus:border-blue-500"
+                className="w-full p-3.5 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] font-mono focus:outline-none focus:border-[#F97316]"
               />
             )}
           </div>
@@ -334,30 +334,30 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
       {/* Trigger Button or Animated Processing Experience */}
       <div className="pt-4">
         {isAnalyzing ? (
-          <div className="p-8 rounded-3xl border border-blue-500/30 bg-slate-900/80 backdrop-blur-xl max-w-xl mx-auto space-y-6 text-center shadow-2xl">
-            <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto animate-pulse">
+          <div className="p-8 rounded-3xl border border-[#E7E5E4] bg-white max-w-xl mx-auto space-y-6 text-center shadow-lg">
+            <div className="w-12 h-12 rounded-2xl bg-[#FFF3E8] border border-[#F97316]/20 flex items-center justify-center text-[#F97316] mx-auto animate-pulse">
               <Sparkles className="w-6 h-6 animate-spin" />
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-base font-bold text-white">AI Engine Processing</h3>
-              <p className="text-xs text-blue-400 font-mono animate-fade-in">
+              <h3 className="text-base font-bold text-[#1C1917]">AI Engine Processing</h3>
+              <p className="text-xs text-[#F97316] font-mono">
                 {stages[currentStage]}
               </p>
             </div>
 
             {/* Stages Checklist */}
-            <div className="space-y-2 text-left text-xs max-w-md mx-auto pt-2 border-t border-slate-800">
+            <div className="space-y-2 text-left text-xs max-w-md mx-auto pt-2 border-t border-[#E7E5E4]">
               {stages.map((stg, idx) => (
                 <div key={idx} className="flex items-center gap-2.5">
                   {idx < currentStage ? (
-                    <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <Check className="w-4 h-4 text-[#16A34A] shrink-0" />
                   ) : idx === currentStage ? (
-                    <RefreshCw className="w-4 h-4 text-blue-400 animate-spin shrink-0" />
+                    <RefreshCw className="w-4 h-4 text-[#F97316] animate-spin shrink-0" />
                   ) : (
-                    <span className="w-4 h-4 rounded-full border border-slate-700 shrink-0" />
+                    <span className="w-4 h-4 rounded-full border border-[#E7E5E4] shrink-0" />
                   )}
-                  <span className={idx <= currentStage ? 'text-slate-200 font-medium' : 'text-slate-600'}>
+                  <span className={idx <= currentStage ? 'text-[#1C1917] font-semibold' : 'text-[#78716C]'}>
                     {stg}
                   </span>
                 </div>
@@ -367,9 +367,9 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
         ) : (
           <button
             onClick={handleRunAnalysis}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#1677FF] to-[#06D6FF] hover:opacity-95 text-[#07111F] text-sm font-extrabold shadow-xl shadow-[#1677FF]/25 flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 cursor-pointer"
+            className="w-full py-4 rounded-2xl bg-[#F97316] hover:bg-[#EA580C] text-white text-sm font-bold shadow-md shadow-[#F97316]/25 flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
           >
-            <Sparkles className="w-5 h-5 fill-[#07111F]" />
+            <Sparkles className="w-5 h-5 fill-white" />
             <span>Analyze Compatibility & Generate Actionable Roadmap</span>
           </button>
         )}

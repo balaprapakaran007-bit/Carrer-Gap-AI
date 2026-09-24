@@ -20,13 +20,13 @@ export interface CustomTheme {
 }
 
 export const PRESET_THEMES: { id: ThemePreset; name: string; hex: string; desc: string }[] = [
-  { id: 'ocean', name: 'Ocean AI', hex: '#1677FF', desc: 'Electric blue & cyan intelligence (Default)' },
-  { id: 'emerald', name: 'Emerald AI', hex: '#14B8A6', desc: 'Growth & verified teal' },
-  { id: 'cyan', name: 'Cyan AI', hex: '#06B6D4', desc: 'Precision & tech cyan' },
-  { id: 'indigo', name: 'Indigo', hex: '#4F46E5', desc: 'Deep focus & engineering' },
-  { id: 'sunset', name: 'Orange', hex: '#EA580C', desc: 'High energy & drive' },
+  { id: 'sunset', name: 'Warm Orange', hex: '#F97316', desc: 'Warm orange energy & clarity (Default)' },
+  { id: 'ocean', name: 'Ocean', hex: '#F97316', desc: 'Clean orange accent' },
+  { id: 'emerald', name: 'Emerald', hex: '#16A34A', desc: 'Growth & verified green' },
+  { id: 'cyan', name: 'Cyan', hex: '#0EA5E9', desc: 'Precision & tech sky' },
+  { id: 'indigo', name: 'Indigo', hex: '#6366F1', desc: 'Deep focus' },
   { id: 'rose', name: 'Rose', hex: '#E11D48', desc: 'Bold ambition' },
-  { id: 'monochrome', name: 'Monochrome', hex: '#64748B', desc: 'Minimalist slate' },
+  { id: 'monochrome', name: 'Monochrome', hex: '#78716C', desc: 'Minimalist stone' },
 ];
 
 interface ThemeContextType {
@@ -87,10 +87,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const { user } = useAuth();
 
   const [theme, setThemeState] = useState<ThemePreset>(() => {
-    return (localStorage.getItem('cg_theme') as ThemePreset) || 'ocean';
+    return (localStorage.getItem('cg_theme') as ThemePreset) || 'sunset';
   });
   const [mode, setModeState] = useState<ThemeMode>(() => {
-    return (localStorage.getItem('cg_mode') as ThemeMode) || 'dark';
+    return (localStorage.getItem('cg_mode') as ThemeMode) || 'light';
   });
   const [density, setDensityState] = useState<DensityMode>(() => {
     return (localStorage.getItem('cg_density') as DensityMode) || 'comfortable';
@@ -105,7 +105,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return localStorage.getItem('cg_adaptive_accent') === 'true';
   });
   const [customHex, setCustomHexState] = useState<string>(() => {
-    return localStorage.getItem('cg_custom_hex') || '#3B82F6';
+    return localStorage.getItem('cg_custom_hex') || '#F97316';
   });
   const [customThemes, setCustomThemes] = useState<CustomTheme[]>(() => {
     try {
