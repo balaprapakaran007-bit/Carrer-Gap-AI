@@ -1,4 +1,5 @@
 import uuid
+import asyncio
 import logging
 from typing import List, Dict, Any
 from app.models.schemas import ProjectGapItem
@@ -123,15 +124,15 @@ class GapEngine:
         return projects
 
     async def generate_projects_with_ai(self, missing_skills: List[str], target_role: str) -> List[ProjectGapItem]:
-        """Uses Gemini to generate tailored, highly relevant project proposals."""
+        """Uses Gemini to generate tailored project proposals with strict 10s timeout ceiling and instant fallback."""
         if not missing_skills:
             return self.get_template_projects(["System Design", "Cloud Deployment"])
 
         prompt = f"""
-        Given the target role "{target_role}" and the following missing candidate skills: {missing_skills},
-        propose 2 concrete, realistic, high-impact portfolio projects that demonstrate these skills in a practical, measurable way.
+        Given the target role "{target_role}" and missing candidate skills: {missing_skills[:5]},
+        propose 2 concrete, realistic portfolio projects demonstrating these skills.
         
-        Return JSON in this format:
+        Return JSON:
         {{
           "projects": [
             {{
@@ -144,22 +145,28 @@ class GapEngine:
               "coreFeatures": ["Feature 1", "Feature 2", "Feature 3"],
               "technologies": ["Tech 1", "Tech 2"],
               "implementationSteps": ["Step 1", "Step 2", "Step 3", "Step 4"],
-              "resumeBullet": "High impact action-oriented resume bullet describing the outcome"
+              "resumeBullet": "High impact action-oriented resume bullet"
             }}
           ]
         }}
         """
-        result = await gemini_service.generate_json(prompt, "You are a senior tech lead designing portfolio projects that get candidates hired.")
-        if result and "projects" in result and isinstance(result["projects"], list) and len(result["projects"]) > 0:
-            parsed = []
-            for p in result["projects"]:
-                try:
-                    p["id"] = str(uuid.uuid4())[:8]
-                    parsed.append(ProjectGapItem(**p))
-                except Exception:
-                    continue
-            if parsed:
-                return parsed
+        try:
+            result = await asyncio.wait_for(
+                gemini_service.generate_json(prompt, "You are a senior tech lead designing portfolio projects."),
+                timeout=10.0
+            )
+            if result and "projects" in result and isinstance(result["projects"], list) and len(result["projects"]) > 0:
+                parsed = []
+                for p in result["projects"]:
+                    try:
+                        p["id"] = str(uuid.uuid4())[:8]
+                        parsed.append(ProjectGapItem(**p))
+                    except Exception:
+                        continue
+                if parsed:
+                    return parsed
+        except Exception as e:
+            logger.info(f"AI project generation bypassed or timed out ({str(e)}), using template architectures.")
 
         return self.get_template_projects(missing_skills)
 

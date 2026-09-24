@@ -154,7 +154,7 @@ class MatchingEngine:
         logger.info(f"Semantic matching & scoring completed in {t_matching_elapsed}s")
 
         if progress_callback:
-            await progress_callback("checking_evidence", "Verifying evidence strength, metrics, and citations...", 4, 5)
+            await progress_callback("evidence_matrix_built", "Evidence matrix built", 3, 5)
 
         matched_skills = [s.skill for s in skill_matrix if s.status == SkillStatus.MATCHED]
         missing_skills = [s.skill for s in skill_matrix if s.status == SkillStatus.MISSING]
@@ -162,14 +162,23 @@ class MatchingEngine:
         crit_count = sum(1 for s in skill_matrix if s.importance == ImportanceLevel.CRITICAL)
 
         if progress_callback:
-            await progress_callback("generating_roadmap", "Generating project proposals and roadmap milestones...", 5, 5)
+            await progress_callback("finding_projects", "Finding project recommendations", 4, 5)
 
         t_gen_start = time.perf_counter()
         
-        # Parallelize project gap generation and roadmap synthesis
-        project_gaps_task = asyncio.create_task(gap_engine.generate_projects_with_ai(missing_skills, job_title))
-        roadmap = roadmap_engine.generate_roadmap_steps(missing_skills, weak_skills, job_title)
-        project_gaps = await project_gaps_task
+        # Concurrently execute project gap proposals and roadmap milestone generation
+        async def run_project_gaps():
+            return await gap_engine.generate_projects_with_ai(missing_skills, job_title)
+
+        async def run_roadmap():
+            if progress_callback:
+                await progress_callback("generating_roadmap", "Generating personalized roadmap", 5, 5)
+            return roadmap_engine.generate_roadmap_steps(missing_skills, weak_skills, job_title)
+
+        project_gaps, roadmap = await asyncio.gather(
+            run_project_gaps(),
+            run_roadmap()
+        )
         
         t_gen_elapsed = round(time.perf_counter() - t_gen_start, 3)
         logger.info(f"Project proposals & roadmap completed in {t_gen_elapsed}s")

@@ -57,11 +57,11 @@ export const AnalysisResultPage: React.FC = () => {
         setAnalysis(data);
         setShareEnabled(data.isShareable);
         setShareToken(data.shareToken || 'demo-share-careergap-2026');
-        // Persist to Cloud Firestore
-        await firestoreService.saveAnalysis(data);
+        setLoading(false);
+        // Persist to Cloud Firestore asynchronously in background
+        firestoreService.saveAnalysis(data).catch((e) => console.warn('Firestore background sync:', e));
       } catch (err) {
         console.error(err);
-      } finally {
         setLoading(false);
       }
     };
@@ -157,9 +157,17 @@ export const AnalysisResultPage: React.FC = () => {
               <Check className="w-4 h-4 shrink-0" />
               <span>Job requirements & importance levels aligned</span>
             </div>
+            <div className="flex items-center gap-2.5 text-[#16A34A] font-semibold">
+              <Check className="w-4 h-4 shrink-0" />
+              <span>Evidence matrix built</span>
+            </div>
             <div className="flex items-center gap-2.5 text-[#F97316] font-bold">
               <RefreshCw className="w-4 h-4 animate-spin shrink-0" />
-              <span>Synthesizing roadmap & evidence matrix...</span>
+              <span>Finding project recommendations</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-[#F97316] font-bold">
+              <RefreshCw className="w-4 h-4 animate-spin shrink-0" />
+              <span>Generating personalized roadmap</span>
             </div>
           </div>
 

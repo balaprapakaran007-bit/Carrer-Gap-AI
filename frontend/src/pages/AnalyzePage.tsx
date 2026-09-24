@@ -77,11 +77,11 @@ export const AnalyzePage: React.FC = () => {
   const timerRef = useRef<any>(null);
 
   const PIPELINE_STAGES = [
-    { key: 'resume_parsed', label: 'Resume parsed & competencies detected' },
-    { key: 'requirements_extracted', label: 'Job requirements & priority levels extracted' },
-    { key: 'comparing_skills', label: 'Comparing skills & computing readiness scores' },
-    { key: 'checking_evidence', label: 'Verifying evidence strength & citations' },
-    { key: 'generating_roadmap', label: 'Generating personalized roadmap & project plans' }
+    { key: 'resume_parsed', label: 'Resume parsed & skills indexed' },
+    { key: 'requirements_extracted', label: 'Job requirements & importance levels aligned' },
+    { key: 'evidence_matrix_built', label: 'Evidence matrix built' },
+    { key: 'finding_projects', label: 'Finding project recommendations' },
+    { key: 'generating_roadmap', label: 'Generating personalized roadmap' }
   ];
 
   useEffect(() => {
