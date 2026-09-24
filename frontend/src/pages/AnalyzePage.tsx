@@ -1,10 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import {
   Upload, FileText, Globe, Sparkles, Check, Loader2,
-  AlertCircle, CheckCircle2, RefreshCw
+  AlertCircle, CheckCircle2, RefreshCw, ChevronDown, Clock, ShieldCheck, Briefcase
 } from 'lucide-react';
+
+interface SampleJob {
+  id: string;
+  title: string;
+  company: string;
+  badge: string;
+  description: string;
+}
+
+const SAMPLE_JOBS: SampleJob[] = [
+  {
+    id: 'sample-ml-engineer',
+    title: 'Machine Learning Engineer',
+    company: 'AI Nexus Corp',
+    badge: 'ML & PyTorch',
+    description: `Role: Machine Learning Engineer
+Company: AI Nexus Corp
+
+We are seeking a Machine Learning Engineer to build, evaluate, and scale predictive intelligence and GenAI models for enterprise clients. In this role, you will design transformer architectures, optimize inference latency with PyTorch, and expose high-throughput endpoints using FastAPI. You will work closely with database architects to write complex SQL aggregations on PostgreSQL and orchestrate containerized microservices using Docker. Experience deploying on AWS and implementing Retrieval Augmented Generation (RAG) pipelines is highly valued. Solid system design principles and distributed system knowledge are required.`
+  },
+  {
+    id: 'sample-ai-platform',
+    title: 'AI Platform Engineer',
+    company: 'Cortex Distributed Systems',
+    badge: 'Docker & Kubernetes',
+    description: `Role: AI Platform Engineer
+Company: Cortex Distributed Systems
+
+Cortex is looking for an AI Platform Engineer to build scalable runtime infrastructure for deploying and monitoring production LLM models. You will be responsible for creating robust containerized workloads with Docker and managing multi-node Kubernetes clusters. You will implement automated CI/CD pipelines to ensure seamless zero-downtime rollouts and develop high-concurrency microservices with Python and FastAPI. The role involves configuring low-latency Redis caching layers, setting up Prometheus metric collection, and designing resilient distributed microservices architectures.`
+  },
+  {
+    id: 'sample-python-backend',
+    title: 'Senior Python Backend Developer',
+    company: 'FinScale Technologies',
+    badge: 'Postgres & AWS',
+    description: `Role: Senior Python Backend Developer
+Company: FinScale Technologies
+
+FinScale is hiring a Senior Python Backend Developer to engineer high-volume transactional financial APIs and data persistence services. You will design scalable database schemas with PostgreSQL, optimize complex queries, and build modular RESTful microservices using FastAPI and Python. You will containerize applications using Docker and deploy cloud infrastructure on AWS. Strong adherence to test-driven development with automated unit testing, robust system design patterns, and clean architectural documentation is required.`
+  }
+];
 
 export const AnalyzePage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,37 +60,43 @@ export const AnalyzePage: React.FC = () => {
   const [jobInputMode, setJobInputMode] = useState<'paste' | 'upload' | 'url'>('paste');
   const [jobTitle, setJobTitle] = useState<string>('Machine Learning Engineer');
   const [jobCompany, setJobCompany] = useState<string>('AI Nexus Corp');
-  const [jobText, setJobText] = useState<string>(`Role: Machine Learning Engineer
-Company: AI Nexus Corp
-
-Requirements:
-- Critical: 2+ years of production experience in Python and Machine Learning model development
-- Critical: Deep proficiency in SQL and relational database modeling (PostgreSQL)
-- Critical: Hands-on experience with PyTorch or TensorFlow for deep learning
-- High: Experience designing and building RESTful APIs using FastAPI
-- High: Proficiency with Docker for containerizing microservices and local development
-- High: Familiarity with Retrieval Augmented Generation (RAG) and LLM application frameworks
-- Medium: Experience with Cloud infrastructure (AWS / GCP) and CI/CD pipelines
-- Medium: Understanding of System Design for scalable distributed services`);
+  const [jobText, setJobText] = useState<string>(SAMPLE_JOBS[0].description);
+  const [selectedSampleBadge, setSelectedSampleBadge] = useState<string>('Sample: Machine Learning Engineer');
   
+  const [showSampleDropdown, setShowSampleDropdown] = useState<boolean>(false);
   const [jobUrl, setJobUrl] = useState<string>('');
   const [isFetchingUrl, setIsFetchingUrl] = useState<boolean>(false);
-  const [urlFetchSuccess, setUrlFetchSuccess] = useState<boolean>(false);
 
   // Analysis Processing State
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-  const [currentStage, setCurrentStage] = useState<number>(0);
+  const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
+  const [currentStageMessage, setCurrentStageMessage] = useState<string>('Initializing analysis pipeline...');
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState<string>('');
 
-  const stages = [
-    'Reading and parsing candidate resume...',
-    'Understanding candidate skills & projects...',
-    'Extracting structured job requirements...',
-    'Comparing semantic skills & taxonomy...',
-    'Verifying evidence strength & citations...',
-    'Detecting project gaps & learning resources...',
-    'Building personalized career roadmap...'
+  const timerRef = useRef<any>(null);
+
+  const PIPELINE_STAGES = [
+    { key: 'resume_parsed', label: 'Resume parsed & competencies detected' },
+    { key: 'requirements_extracted', label: 'Job requirements & priority levels extracted' },
+    { key: 'comparing_skills', label: 'Comparing skills & computing readiness scores' },
+    { key: 'checking_evidence', label: 'Verifying evidence strength & citations' },
+    { key: 'generating_roadmap', label: 'Generating personalized roadmap & project plans' }
   ];
+
+  useEffect(() => {
+    if (isAnalyzing) {
+      setElapsedSeconds(0);
+      timerRef.current = setInterval(() => {
+        setElapsedSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isAnalyzing]);
 
   // Handle Resume File Pick
   const handleResumeFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +143,15 @@ Semantic Search & Question Answering Engine
 SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, Pandas, Scikit-Learn, Git. Basic: Docker, AWS, FastAPI.`);
   };
 
+  // Select Sample Job
+  const handleSelectSampleJob = (sample: SampleJob) => {
+    setJobTitle(sample.title);
+    setJobCompany(sample.company);
+    setJobText(sample.description);
+    setSelectedSampleBadge(`Sample: ${sample.title}`);
+    setShowSampleDropdown(false);
+  };
+
   // Handle URL Fetch
   const handleFetchUrl = async () => {
     if (!jobUrl) return;
@@ -105,7 +161,7 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
       const res = await api.fetchJobFromUrl(jobUrl);
       setJobText(res.extractedText);
       if (res.title) setJobTitle(res.title);
-      setUrlFetchSuccess(true);
+      setSelectedSampleBadge('');
     } catch (err: any) {
       setErrorMsg(err.message || 'Failed to extract job posting from URL. Please paste the job description text.');
     } finally {
@@ -113,7 +169,7 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
     }
   };
 
-  // Start Analysis
+  // Start Analysis with Real-Time Staged SSE Streaming
   const handleRunAnalysis = async () => {
     if (!resumeText && !resumeUploaded) {
       setErrorMsg('Please upload a resume or use the demo resume.');
@@ -126,38 +182,41 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
 
     setIsAnalyzing(true);
     setErrorMsg('');
-    setCurrentStage(0);
-
-    // Animation ticker
-    const interval = setInterval(() => {
-      setCurrentStage((prev) => {
-        if (prev < stages.length - 1) return prev + 1;
-        return prev;
-      });
-    }, 700);
+    setCurrentStageIndex(0);
+    setCurrentStageMessage('Reading and parsing candidate resume...');
 
     try {
-      const result = await api.createAnalysis({
-        resumeText: resumeText || 'Demo ML candidate resume with Python, PyTorch, SQL.',
-        resumeFileName: resumeFileName || 'Candidate_Resume.pdf',
-        jobText: jobText,
-        jobTitle: jobTitle,
-        jobCompany: jobCompany
-      });
+      const result = await api.createAnalysisStream(
+        {
+          resumeText: resumeText || 'Demo ML candidate resume with Python, PyTorch, SQL.',
+          resumeFileName: resumeFileName || 'Candidate_Resume.pdf',
+          jobText: jobText,
+          jobTitle: jobTitle,
+          jobCompany: jobCompany
+        },
+        (stageUpdate) => {
+          setCurrentStageIndex(stageUpdate.step);
+          setCurrentStageMessage(stageUpdate.message);
+        }
+      );
 
-      clearInterval(interval);
       setTimeout(() => {
         navigate(`/analysis/${result.id}`);
-      }, 500);
+      }, 400);
     } catch (err: any) {
-      clearInterval(interval);
       setIsAnalyzing(false);
-      setErrorMsg(err.message || 'Analysis failed. Please try again.');
+      setErrorMsg(err.message || 'Analysis failed. Please check inputs and try again.');
     }
   };
 
+  const formatTimer = (secs: number) => {
+    const mins = Math.floor(secs / 60);
+    const remaining = secs % 60;
+    return `${mins.toString().padStart(2, '0')}:${remaining.toString().padStart(2, '0')}s`;
+  };
+
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 selection:bg-[#F97316] selection:text-white bg-white">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 selection:bg-[#FFF3E8] selection:text-[#F97316] bg-white">
       
       {/* Header */}
       <div>
@@ -166,7 +225,7 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
           AI Career Gap & Compatibility Analysis
         </h1>
         <p className="text-xs text-[#78716C] mt-1">
-          Upload your resume and input the target job description to discover exact gaps and your custom roadmap.
+          Upload your resume and select a target job to discover exact skill gaps, evidence strength, and your personalized roadmap.
         </p>
       </div>
 
@@ -189,6 +248,7 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
                 <span>1. Candidate Resume</span>
               </h3>
               <button
+                type="button"
                 onClick={handleLoadDemoResume}
                 className="text-xs font-semibold text-[#F97316] hover:text-[#EA580C] transition cursor-pointer"
               >
@@ -231,38 +291,57 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
             )}
           </div>
 
-          <p className="text-[11px] text-[#78716C]">
-            Privacy Guarantee: Resumes are analyzed securely and never shared with third parties without explicit opt-in.
-          </p>
+          <div className="flex items-center gap-2 text-[11px] text-[#78716C] pt-2 border-t border-[#E7E5E4]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
+            <span>Resumes are parsed securely for candidate benchmarking.</span>
+          </div>
         </div>
 
         {/* RIGHT COLUMN: Job Description Input */}
         <div className="p-6 rounded-3xl border border-[#E7E5E4] bg-white shadow-sm space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E7E5E4]">
+            
+            {/* Header with Sample Job Selector */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#E7E5E4]">
               <h3 className="text-sm font-bold text-[#1C1917] flex items-center gap-2">
-                <Globe className="w-4 h-4 text-[#F97316]" />
-                <span>2. Job Description</span>
+                <Briefcase className="w-4 h-4 text-[#F97316]" />
+                <span>2. Target Job Description</span>
               </h3>
 
-              {/* Tabs */}
-              <div className="flex items-center gap-1 bg-[#FAFAFA] p-1 rounded-xl border border-[#E7E5E4] text-[11px]">
+              {/* Sample Job Dropdown */}
+              <div className="relative">
                 <button
-                  onClick={() => setJobInputMode('paste')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition cursor-pointer ${
-                    jobInputMode === 'paste' ? 'bg-[#F97316] text-white' : 'text-[#78716C] hover:text-[#1C1917]'
-                  }`}
+                  type="button"
+                  onClick={() => setShowSampleDropdown(!showSampleDropdown)}
+                  className="px-3 py-1 rounded-xl text-xs font-bold text-[#F97316] bg-[#FFF3E8] border border-[#F97316]/30 hover:bg-[#F97316] hover:text-white transition flex items-center gap-1.5 cursor-pointer shadow-sm"
                 >
-                  Paste Text
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Try a sample job ▾</span>
                 </button>
-                <button
-                  onClick={() => setJobInputMode('url')}
-                  className={`px-2.5 py-1 rounded-lg font-semibold transition cursor-pointer ${
-                    jobInputMode === 'url' ? 'bg-[#F97316] text-white' : 'text-[#78716C] hover:text-[#1C1917]'
-                  }`}
-                >
-                  Import URL
-                </button>
+
+                {showSampleDropdown && (
+                  <div className="absolute right-0 mt-2 w-72 rounded-2xl border border-[#E7E5E4] bg-white p-2 shadow-xl z-30 animate-in fade-in zoom-in-95 duration-150 space-y-1">
+                    <div className="px-3 py-1 text-[10px] font-bold text-[#78716C] uppercase tracking-wider">
+                      Preset Job Roles
+                    </div>
+                    {SAMPLE_JOBS.map((sample) => (
+                      <button
+                        key={sample.id}
+                        type="button"
+                        onClick={() => handleSelectSampleJob(sample)}
+                        className="w-full p-2.5 rounded-xl text-left hover:bg-[#FAFAFA] border border-transparent hover:border-[#E7E5E4] transition cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-[#1C1917]">{sample.title}</span>
+                          <span className="text-[10px] font-semibold text-[#F97316] bg-[#FFF3E8] px-1.5 py-0.5 rounded">
+                            {sample.badge}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-[#78716C] block">{sample.company}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -273,7 +352,10 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
                 <input
                   type="text"
                   value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
+                  onChange={(e) => {
+                    setJobTitle(e.target.value);
+                    setSelectedSampleBadge('');
+                  }}
                   placeholder="e.g. Machine Learning Engineer"
                   className="w-full px-3 py-2 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] focus:outline-none focus:border-[#F97316] focus:bg-white transition"
                 />
@@ -283,89 +365,95 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
                 <input
                   type="text"
                   value={jobCompany}
-                  onChange={(e) => setJobCompany(e.target.value)}
+                  onChange={(e) => {
+                    setJobCompany(e.target.value);
+                    setSelectedSampleBadge('');
+                  }}
                   placeholder="e.g. AI Nexus Corp"
                   className="w-full px-3 py-2 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] focus:outline-none focus:border-[#F97316] focus:bg-white transition"
                 />
               </div>
             </div>
 
-            {/* Mode URL */}
-            {jobInputMode === 'url' ? (
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    value={jobUrl}
-                    onChange={(e) => setJobUrl(e.target.value)}
-                    placeholder="https://linkedin.com/jobs/view/... or greenhouse.io/..."
-                    className="flex-1 px-3 py-2.5 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] focus:outline-none focus:border-[#F97316]"
-                  />
-                  <button
-                    onClick={handleFetchUrl}
-                    disabled={isFetchingUrl || !jobUrl}
-                    className="px-4 py-2.5 rounded-xl bg-[#F97316] hover:bg-[#EA580C] disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
-                  >
-                    {isFetchingUrl ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Globe className="w-3.5 h-3.5" />}
-                    <span>Fetch</span>
-                  </button>
-                </div>
-                <textarea
-                  rows={7}
-                  value={jobText}
-                  onChange={(e) => setJobText(e.target.value)}
-                  placeholder="Extracted job description will appear here for confirmation..."
-                  className="w-full p-3 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] font-mono focus:outline-none focus:border-[#F97316]"
-                />
+            {/* Sample Indicator Badge */}
+            {selectedSampleBadge && (
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAFAFA] border border-[#E7E5E4] text-[11px] font-medium text-[#78716C]">
+                <Check className="w-3 h-3 text-[#16A34A]" />
+                <span>{selectedSampleBadge}</span>
               </div>
-            ) : (
+            )}
+
+            {/* Job Description Textarea */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-semibold text-[#78716C] block">Job Requirements & Responsibilities</label>
               <textarea
                 rows={9}
                 value={jobText}
-                onChange={(e) => setJobText(e.target.value)}
+                onChange={(e) => {
+                  setJobText(e.target.value);
+                  setSelectedSampleBadge('');
+                }}
                 placeholder="Paste the full job posting requirements and responsibilities..."
-                className="w-full p-3.5 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] font-mono focus:outline-none focus:border-[#F97316]"
+                className="w-full p-3.5 rounded-xl bg-[#FAFAFA] border border-[#E7E5E4] text-xs text-[#1C1917] font-mono focus:outline-none focus:border-[#F97316] focus:bg-white transition leading-relaxed"
               />
-            )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Trigger Button or Animated Processing Experience */}
+      {/* Trigger Button or Staged Progress Experience */}
       <div className="pt-4">
         {isAnalyzing ? (
           <div className="p-8 rounded-3xl border border-[#E7E5E4] bg-white max-w-xl mx-auto space-y-6 text-center shadow-lg">
-            <div className="w-12 h-12 rounded-2xl bg-[#FFF3E8] border border-[#F97316]/20 flex items-center justify-center text-[#F97316] mx-auto animate-pulse">
-              <Sparkles className="w-6 h-6 animate-spin" />
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-base font-bold text-[#1C1917]">AI Engine Processing</h3>
-              <p className="text-xs text-[#F97316] font-mono">
-                {stages[currentStage]}
-              </p>
-            </div>
-
-            {/* Stages Checklist */}
-            <div className="space-y-2 text-left text-xs max-w-md mx-auto pt-2 border-t border-[#E7E5E4]">
-              {stages.map((stg, idx) => (
-                <div key={idx} className="flex items-center gap-2.5">
-                  {idx < currentStage ? (
-                    <Check className="w-4 h-4 text-[#16A34A] shrink-0" />
-                  ) : idx === currentStage ? (
-                    <RefreshCw className="w-4 h-4 text-[#F97316] animate-spin shrink-0" />
-                  ) : (
-                    <span className="w-4 h-4 rounded-full border border-[#E7E5E4] shrink-0" />
-                  )}
-                  <span className={idx <= currentStage ? 'text-[#1C1917] font-semibold' : 'text-[#78716C]'}>
-                    {stg}
-                  </span>
+            
+            {/* Spinner & Timer */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-[#FFF3E8] border border-[#F97316]/20 flex items-center justify-center text-[#F97316] mx-auto shadow-sm">
+                <Sparkles className="w-6 h-6 animate-spin" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#1C1917]">Running Career Gap Analysis</h3>
+                <div className="flex items-center justify-center gap-1.5 text-xs text-[#78716C] font-mono mt-1">
+                  <Clock className="w-3.5 h-3.5 text-[#F97316]" />
+                  <span>Elapsed: {formatTimer(elapsedSeconds)}</span>
                 </div>
-              ))}
+              </div>
             </div>
+
+            {/* Staged Checklist */}
+            <div className="space-y-3 text-left text-xs max-w-md mx-auto pt-4 border-t border-[#E7E5E4]">
+              {PIPELINE_STAGES.map((stg, idx) => {
+                const stepNum = idx + 1;
+                const isCompleted = currentStageIndex >= stepNum;
+                const isCurrent = currentStageIndex === idx;
+
+                return (
+                  <div key={stg.key} className="flex items-center gap-3">
+                    {isCompleted ? (
+                      <Check className="w-4 h-4 text-[#16A34A] shrink-0" />
+                    ) : isCurrent ? (
+                      <RefreshCw className="w-4 h-4 text-[#F97316] animate-spin shrink-0" />
+                    ) : (
+                      <span className="w-4 h-4 rounded-full border border-[#E7E5E4] shrink-0" />
+                    )}
+                    <span className={isCompleted ? 'text-[#1C1917] font-semibold' : isCurrent ? 'text-[#F97316] font-bold' : 'text-[#78716C]'}>
+                      {stg.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* 15s Reassurance Note */}
+            {elapsedSeconds >= 15 && (
+              <p className="text-[11px] text-[#78716C] bg-[#FAFAFA] p-3 rounded-xl border border-[#E7E5E4] animate-in fade-in">
+                💡 Complex resumes and extensive job descriptions can take up to a minute.
+              </p>
+            )}
           </div>
         ) : (
           <button
+            type="button"
             onClick={handleRunAnalysis}
             className="w-full py-4 rounded-2xl bg-[#F97316] hover:bg-[#EA580C] text-white text-sm font-bold shadow-md shadow-[#F97316]/25 flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
           >

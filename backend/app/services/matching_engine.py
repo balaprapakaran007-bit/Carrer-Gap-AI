@@ -1,18 +1,19 @@
 import uuid
+import time
+import asyncio
 import logging
 from datetime import datetime
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional, Callable
 from app.models.schemas import (
     FullAnalysisResult, SkillAnalysisItem, RequirementItem,
     ScoreBreakdown, SkillStatus, ImportanceLevel, EvidenceLevel,
-    ResumeSuggestionItem
+    ResumeSuggestionItem, ProjectGapItem, RoadmapStepItem
 )
 from app.config import settings
 from app.services.embedding_service import embedding_service
 from app.services.evidence_engine import evidence_engine
 from app.services.gap_engine import gap_engine
 from app.services.roadmap_engine import roadmap_engine
-from app.services.gemini_service import gemini_service
 
 logger = logging.getLogger("careergap.matching_engine")
 
@@ -32,7 +33,6 @@ class MatchingEngine:
         high_items = [s for s in skill_matrix if s.importance == ImportanceLevel.HIGH]
         med_items = [s for s in skill_matrix if s.importance in [ImportanceLevel.MEDIUM, ImportanceLevel.OPTIONAL]]
 
-        # Helper to compute group score (Matched = 1.0, Weak = 0.5, Missing = 0.0)
         def score_group(items: List[SkillAnalysisItem], max_points: float) -> float:
             if not items:
                 return max_points
@@ -48,7 +48,6 @@ class MatchingEngine:
         high_score = score_group(high_items, 30.0)
         med_score = score_group(med_items, 20.0)
 
-        # Evidence strength points (out of 10.0)
         matched_or_weak = [s for s in skill_matrix if s.status != SkillStatus.MISSING]
         if not matched_or_weak:
             ev_score = 0.0
@@ -81,52 +80,52 @@ class MatchingEngine:
         job_title: str,
         job_company: str,
         resume_id: str = None,
-        job_id: str = None
+        job_id: str = None,
+        progress_callback: Optional[Callable[[str, str, int, int], Any]] = None
     ) -> FullAnalysisResult:
         """
-        Executes end-to-end explainable matching, evidence checking, gap detection, and roadmap building.
+        Executes end-to-end explainable matching, evidence checking, gap detection, and roadmap building
+        with granular stage callbacks and timing diagnostics.
         """
+        t_start = time.perf_counter()
+
+        if progress_callback:
+            await progress_callback("comparing_skills", "Comparing candidate skills with target requirements...", 3, 5)
+
+        t_matching_start = time.perf_counter()
         skill_matrix: List[SkillAnalysisItem] = []
         lower_resume = resume_text.lower()
         
-        # Track which requirements got matched
+        # Match each requirement against candidate skills and resume text
         for req in job_requirements:
-            # Extract main skill term from requirement
             req_text = req.requirement
             req_skill = embedding_service.normalize_skill(req_text.split(" in ")[-1] if " in " in req_text else req_text.split()[-1])
             if len(req_skill) < 2:
                 req_skill = req_text[:25]
 
-            # Check semantic match against detected candidate skills or resume text
             best_sim = 0.0
-            matched_candidate_skill = None
             for cand_skill in detected_skills:
                 sim = embedding_service.calculate_skill_similarity(cand_skill, req_skill)
                 if sim > best_sim:
                     best_sim = sim
-                    matched_candidate_skill = cand_skill
 
-            # Direct text check
             if req_skill.lower() in lower_resume and best_sim < 0.8:
                 best_sim = 0.85
-                matched_candidate_skill = req_skill
 
-            # Evaluate Evidence
             ev_level, evidence_snippet, ev_rec = evidence_engine.evaluate_evidence(req_skill, resume_text)
 
-            # Determine Match Status
             if best_sim >= 0.75:
-                if ev_level in [EvidenceLevel.STRONG, EvidenceLevel.MODERATE]:
+                if ev_level in [EvidenceLevel.STRONG, EvidenceLevel.MODERATE] or best_sim >= 0.85:
                     status = SkillStatus.MATCHED
-                    why = f"Required in the job description and verified with practical evidence in your resume."
+                    why = "Required in the job description and verified with evidence in your resume."
                 else:
                     status = SkillStatus.WEAK
-                    why = f"Mentioned in your profile, but lacks practical context or project demonstrations."
+                    why = "Mentioned in your profile, but lacks extensive practical context or project demonstrations."
                 req.matched = True
                 req.evidence = evidence_snippet
             else:
                 status = SkillStatus.MISSING
-                why = f"Explicitly required in the job description but not demonstrated in your profile."
+                why = "Explicitly required in the job description but not demonstrated in your profile."
                 req.matched = False
                 req.evidence = None
 
@@ -149,23 +148,33 @@ class MatchingEngine:
             return (status_order[s.status], imp_order[s.importance])
 
         skill_matrix.sort(key=sort_key)
-
-        # Calculate Score
         total_score, breakdown = self.calculate_transparent_score(skill_matrix)
 
-        # Separate into categories
+        t_matching_elapsed = round(time.perf_counter() - t_matching_start, 3)
+        logger.info(f"Semantic matching & scoring completed in {t_matching_elapsed}s")
+
+        if progress_callback:
+            await progress_callback("checking_evidence", "Verifying evidence strength, metrics, and citations...", 4, 5)
+
         matched_skills = [s.skill for s in skill_matrix if s.status == SkillStatus.MATCHED]
         missing_skills = [s.skill for s in skill_matrix if s.status == SkillStatus.MISSING]
         weak_skills = [s.skill for s in skill_matrix if s.status == SkillStatus.WEAK]
         crit_count = sum(1 for s in skill_matrix if s.importance == ImportanceLevel.CRITICAL)
 
-        # Generate Project Gaps
-        project_gaps = await gap_engine.generate_projects_with_ai(missing_skills, job_title)
+        if progress_callback:
+            await progress_callback("generating_roadmap", "Generating project proposals and roadmap milestones...", 5, 5)
 
-        # Generate Personalized Roadmap
+        t_gen_start = time.perf_counter()
+        
+        # Parallelize project gap generation and roadmap synthesis
+        project_gaps_task = asyncio.create_task(gap_engine.generate_projects_with_ai(missing_skills, job_title))
         roadmap = roadmap_engine.generate_roadmap_steps(missing_skills, weak_skills, job_title)
+        project_gaps = await project_gaps_task
+        
+        t_gen_elapsed = round(time.perf_counter() - t_gen_start, 3)
+        logger.info(f"Project proposals & roadmap completed in {t_gen_elapsed}s")
 
-        # Generate Resume Suggestions
+        # Resume Suggestions
         resume_suggestions = []
         for item in skill_matrix:
             if item.status == SkillStatus.WEAK and item.matchedResumeText:
@@ -186,6 +195,9 @@ class MatchingEngine:
         analysis_id = str(uuid.uuid4())
         summary_para = f"Your profile demonstrates strong alignment with {len(matched_skills)} key requirements for the {job_title} role at {job_company}. Closing {len(missing_skills)} missing skills and elevating {len(weak_skills)} weak evidence areas via the recommended roadmap will raise your readiness from {total_score}% to 90%+."
 
+        t_total = round(time.perf_counter() - t_start, 3)
+        logger.info(f"Full analysis pipeline finished in {t_total}s (ID: {analysis_id})")
+
         return FullAnalysisResult(
             id=analysis_id,
             userId="user_default",
@@ -204,7 +216,7 @@ class MatchingEngine:
             projectGaps=project_gaps,
             roadmap=roadmap,
             resumeSuggestions=resume_suggestions,
-            topStrengths=matched_skills[:5],
+            topStrengths=(matched_skills if matched_skills else weak_skills)[:5],
             primaryGaps=missing_skills[:5],
             summaryParagraph=summary_para,
             isShareable=False,

@@ -12,7 +12,7 @@ import { ScoreBreakdownCard } from '../components/ScoreBreakdownCard';
 import {
   Sparkles, CheckCircle2, XCircle, AlertTriangle, Mic, Share2,
   RefreshCw, Download, FileText, Layers, MapPin, Award, Check, Copy,
-  ArrowRight, ShieldCheck
+  ArrowRight, ShieldCheck, Clock
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -36,6 +36,19 @@ export const AnalysisResultPage: React.FC = () => {
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
+
+  useEffect(() => {
+    let timer: any = null;
+    if (loading) {
+      timer = setInterval(() => {
+        setElapsedSeconds((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [loading]);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
@@ -117,13 +130,44 @@ export const AnalysisResultPage: React.FC = () => {
   };
 
   if (loading) {
+    const mins = Math.floor(elapsedSeconds / 60);
+    const secs = elapsedSeconds % 60;
+    const timerStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}s`;
+
     return (
-      <div className="min-h-[60vh] flex items-center justify-center bg-white">
-        <div className="text-center space-y-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#FFF3E8] border border-[#F97316]/20 flex items-center justify-center text-[#F97316] mx-auto animate-spin">
-            <Sparkles className="w-5 h-5 fill-[#F97316]" />
+      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-white">
+        <div className="p-8 rounded-3xl border border-[#E7E5E4] bg-white max-w-md w-full space-y-6 text-center shadow-lg">
+          <div className="w-12 h-12 rounded-2xl bg-[#FFF3E8] border border-[#F97316]/20 flex items-center justify-center text-[#F97316] mx-auto shadow-sm">
+            <Sparkles className="w-6 h-6 animate-spin" />
           </div>
-          <p className="text-xs text-[#78716C] font-mono">Loading Verified Competency Profile...</p>
+          <div>
+            <h3 className="text-base font-bold text-[#1C1917]">Retrieving Competency Profile</h3>
+            <div className="flex items-center justify-center gap-1.5 text-xs text-[#78716C] font-mono mt-1">
+              <Clock className="w-3.5 h-3.5 text-[#F97316]" />
+              <span>Elapsed: {timerStr}</span>
+            </div>
+          </div>
+
+          <div className="space-y-2.5 text-left text-xs pt-3 border-t border-[#E7E5E4]">
+            <div className="flex items-center gap-2.5 text-[#16A34A] font-semibold">
+              <Check className="w-4 h-4 shrink-0" />
+              <span>Resume parsed & skills indexed</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-[#16A34A] font-semibold">
+              <Check className="w-4 h-4 shrink-0" />
+              <span>Job requirements & importance levels aligned</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-[#F97316] font-bold">
+              <RefreshCw className="w-4 h-4 animate-spin shrink-0" />
+              <span>Synthesizing roadmap & evidence matrix...</span>
+            </div>
+          </div>
+
+          {elapsedSeconds >= 15 && (
+            <p className="text-[11px] text-[#78716C] bg-[#FAFAFA] p-3 rounded-xl border border-[#E7E5E4] animate-in fade-in">
+              💡 Complex resumes and job descriptions can take up to a minute.
+            </p>
+          )}
         </div>
       </div>
     );

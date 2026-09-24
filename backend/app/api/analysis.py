@@ -1,10 +1,14 @@
+import json
 import uuid
+import asyncio
+import logging
 from datetime import datetime
 from fastapi import APIRouter, HTTPException
-from typing import List, Dict, Any
+from fastapi.responses import StreamingResponse
+from typing import List, Dict, Any, AsyncGenerator
 from app.models.schemas import (
     AnalysisCreateRequest, FullAnalysisResult, AnalysisCompareResponse,
-    MultiJobCompareRequest, MultiJobCompareResponse
+    MultiJobCompareRequest, MultiJobCompareResponse, RequirementItem
 )
 from app.services.resume_parser import resume_parser
 from app.services.job_parser import job_parser
@@ -12,48 +16,57 @@ from app.services.matching_engine import matching_engine
 from app.services.embedding_service import embedding_service
 from app.services.firebase_service import firebase_service
 
+logger = logging.getLogger("careergap.api.analysis")
 router = APIRouter(prefix="/analysis", tags=["Analysis"])
+
+async def _resolve_inputs(payload: AnalysisCreateRequest):
+    """
+    Resolves resume competencies and job requirements concurrently for maximum throughput.
+    """
+    async def get_resume_data():
+        if payload.resumeId:
+            resume = firebase_service.get_resume(payload.resumeId)
+            if not resume:
+                raise HTTPException(status_code=404, detail="Selected resume not found.")
+            return resume.parsedText, resume.skills
+        elif payload.resumeText:
+            return payload.resumeText, resume_parser.extract_detected_skills(payload.resumeText)
+        else:
+            analysis = firebase_service.get_analysis("demo-analysis-ml-01")
+            if analysis:
+                return "Demo Resume", ["Python", "PyTorch", "SQL", "Machine Learning"]
+            raise HTTPException(status_code=400, detail="Please provide resume information.")
+
+    async def get_job_data():
+        if payload.jobId:
+            job = firebase_service.get_job(payload.jobId)
+            if not job:
+                raise HTTPException(status_code=404, detail="Selected job description not found.")
+            return job.requirements, job.title, job.company or "Target Company"
+        elif payload.jobText:
+            j_title = payload.jobTitle or "Target Role"
+            j_company = payload.jobCompany or "Target Company"
+            j_reqs = await job_parser.parse_with_ai(j_title, payload.jobText)
+            return j_reqs, j_title, j_company
+        else:
+            analysis = firebase_service.get_analysis("demo-analysis-ml-01")
+            if analysis:
+                return analysis.requirements, analysis.jobTitle, analysis.jobCompany
+            raise HTTPException(status_code=400, detail="Please provide job description.")
+
+    # Run resume extraction and job requirement parsing concurrently
+    (resume_text, detected_skills), (requirements, job_title, job_company) = await asyncio.gather(
+        get_resume_data(),
+        get_job_data()
+    )
+
+    return resume_text, detected_skills, requirements, job_title, job_company
 
 @router.post("", response_model=FullAnalysisResult)
 async def create_analysis(payload: AnalysisCreateRequest):
-    """Generates complete AI Career Gap analysis."""
-    # 1. Resolve Resume Text
-    if payload.resumeId:
-        resume = firebase_service.get_resume(payload.resumeId)
-        if not resume:
-            raise HTTPException(status_code=404, detail="Selected resume not found.")
-        resume_text = resume.parsedText
-        detected_skills = resume.skills
-    elif payload.resumeText:
-        resume_text = payload.resumeText
-        detected_skills = resume_parser.extract_detected_skills(resume_text)
-    else:
-        # If demo mode
-        analysis = firebase_service.get_analysis("demo-analysis-ml-01")
-        if analysis:
-            return analysis
-        raise HTTPException(status_code=400, detail="Please provide resume information.")
+    """Generates complete AI Career Gap analysis with concurrent stage processing."""
+    resume_text, detected_skills, requirements, job_title, job_company = await _resolve_inputs(payload)
 
-    # 2. Resolve Job Requirements
-    if payload.jobId:
-        job = firebase_service.get_job(payload.jobId)
-        if not job:
-            raise HTTPException(status_code=404, detail="Selected job description not found.")
-        requirements = job.requirements
-        job_title = job.title
-        job_company = job.company or "Target Company"
-    elif payload.jobText:
-        job_title = payload.jobTitle or "Target Role"
-        job_company = payload.jobCompany or "Company"
-        requirements = await job_parser.parse_with_ai(job_title, payload.jobText)
-    else:
-        # Fallback to demo
-        analysis = firebase_service.get_analysis("demo-analysis-ml-01")
-        if analysis:
-            return analysis
-        raise HTTPException(status_code=400, detail="Please provide job description.")
-
-    # 3. Perform explainable matching and analysis
     analysis_result = await matching_engine.analyze(
         resume_text=resume_text,
         detected_skills=detected_skills,
@@ -67,6 +80,91 @@ async def create_analysis(payload: AnalysisCreateRequest):
     firebase_service.save_analysis(analysis_result)
     return analysis_result
 
+@router.post("/stream")
+async def create_analysis_stream(payload: AnalysisCreateRequest):
+    """
+    Server-Sent Events endpoint streaming real-time stage progress to the frontend:
+    - Stage 1: Resume parsed
+    - Stage 2: Job requirements extracted
+    - Stage 3: Skills compared & scored
+    - Stage 4: Evidence citations checked
+    - Stage 5: Roadmap generated
+    - Stage 6: Final result emitted
+    """
+    async def event_generator() -> AsyncGenerator[str, None]:
+        queue: asyncio.Queue = asyncio.Queue()
+
+        async def stage_callback(stage_id: str, message: str, step: int, total: int):
+            await queue.put({
+                "type": "stage",
+                "stage": stage_id,
+                "message": message,
+                "step": step,
+                "total": total
+            })
+
+        async def run_pipeline():
+            try:
+                # Stage 1: Resume parsed
+                await stage_callback("resume_parsed", "Resume parsed and skills detected", 1, 5)
+
+                # Stage 2: Job requirements extracted
+                resume_text, detected_skills, requirements, job_title, job_company = await _resolve_inputs(payload)
+                await stage_callback("requirements_extracted", "Job requirements and priority levels extracted", 2, 5)
+
+                # Stages 3-5: Matching, Evidence & Roadmap
+                result = await matching_engine.analyze(
+                    resume_text=resume_text,
+                    detected_skills=detected_skills,
+                    job_requirements=requirements,
+                    job_title=job_title,
+                    job_company=job_company,
+                    resume_id=payload.resumeId,
+                    job_id=payload.jobId,
+                    progress_callback=stage_callback
+                )
+
+                firebase_service.save_analysis(result)
+
+                # Final emission
+                await queue.put({
+                    "type": "complete",
+                    "stage": "completed",
+                    "message": "Analysis successfully completed",
+                    "step": 5,
+                    "total": 5,
+                    "result": result.model_dump() if hasattr(result, "model_dump") else result.dict()
+                })
+            except Exception as e:
+                logger.error(f"Error in streaming analysis: {str(e)}")
+                await queue.put({
+                    "type": "error",
+                    "stage": "failed",
+                    "message": str(e) or "An error occurred during analysis generation"
+                })
+            finally:
+                await queue.put(None)  # Sentinel to end stream
+
+        pipeline_task = asyncio.create_task(run_pipeline())
+
+        while True:
+            item = await queue.get()
+            if item is None:
+                break
+            yield f"data: {json.dumps(item)}\n\n"
+
+        await pipeline_task
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
 @router.get("", response_model=List[FullAnalysisResult])
 async def list_analyses():
     """Lists all saved analyses."""
@@ -77,7 +175,6 @@ async def get_analysis(id: str):
     """Retrieves an analysis by ID."""
     analysis = firebase_service.get_analysis(id)
     if not analysis:
-        # Check demo
         if id.startswith("demo"):
             analysis = firebase_service.get_analysis("demo-analysis-ml-01")
         if not analysis:
@@ -131,7 +228,6 @@ async def compare_multiple_jobs(payload: MultiJobCompareRequest):
         for req in reqs:
             s = embedding_service.normalize_skill(req.requirement.split()[-1])
             job_req_skills.add(s)
-            # Check match
             is_matched = any(embedding_service.calculate_skill_similarity(cand, s) >= 0.75 for cand in candidate_skills)
             if not is_matched:
                 job_missing.append(s)
@@ -140,18 +236,15 @@ async def compare_multiple_jobs(payload: MultiJobCompareRequest):
         all_job_skills[title] = job_req_skills
         job_gaps_map[title] = job_missing
 
-    # Common skills across all or most jobs
     common_skills = []
     for cand in candidate_skills:
         if sum(1 for req_set in all_job_skills.values() if any(embedding_service.calculate_skill_similarity(cand, s) > 0.7 for s in req_set)) >= max(1, len(payload.jobDescriptions) - 1):
             common_skills.append(cand)
 
-    # Common gaps (missing in 2 or more jobs)
     common_gaps = [skill for skill, count in gap_frequency.items() if count >= 2]
     if not common_gaps and gap_frequency:
         common_gaps = list(gap_frequency.keys())[:3]
 
-    # Highest-leverage skill to learn next
     sorted_leverage = sorted(gap_frequency.items(), key=lambda x: x[1], reverse=True)
     highest_leverage = [
         {

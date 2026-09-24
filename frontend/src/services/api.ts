@@ -81,6 +81,78 @@ export const api = {
     return res.json();
   },
 
+  async createAnalysisStream(
+    payload: {
+      resumeId?: string;
+      resumeText?: string;
+      resumeFileName?: string;
+      jobId?: string;
+      jobText?: string;
+      jobTitle?: string;
+      jobCompany?: string;
+      isDemo?: boolean;
+    },
+    onStageUpdate?: (data: { stage: string; message: string; step: number; total: number }) => void
+  ): Promise<FullAnalysisResult> {
+    const response = await fetch(`${API_BASE_URL}/analysis/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({ detail: 'Analysis failed' }));
+      throw new Error(err.detail || 'Failed to initiate analysis stream');
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      return this.createAnalysis(payload);
+    }
+
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    let finalResult: FullAnalysisResult | null = null;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6));
+            if (data.type === 'stage' && onStageUpdate) {
+              onStageUpdate({
+                stage: data.stage,
+                message: data.message,
+                step: data.step,
+                total: data.total
+              });
+            } else if (data.type === 'complete' && data.result) {
+              finalResult = data.result;
+            } else if (data.type === 'error') {
+              throw new Error(data.message || 'Analysis processing failed');
+            }
+          } catch (e: any) {
+            if (e.message && e.message.includes('Analysis processing failed')) throw e;
+          }
+        }
+      }
+    }
+
+    if (finalResult) {
+      return finalResult;
+    }
+
+    // Fallback if stream ended without explicit result object
+    return this.createAnalysis(payload);
+  },
+
   async getAnalysis(id: string): Promise<FullAnalysisResult> {
     const res = await fetch(`${API_BASE_URL}/analysis/${id}`);
     if (!res.ok) throw new Error('Analysis not found');
