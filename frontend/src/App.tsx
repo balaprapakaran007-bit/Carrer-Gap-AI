@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { DashboardProvider } from './context/DashboardContext';
+
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
+import { CommandPalette } from './components/CommandPalette';
+import { OnboardingTour } from './components/OnboardingTour';
+
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -14,6 +20,10 @@ import { InterviewPage } from './pages/InterviewPage';
 import { MultiComparePage } from './pages/MultiComparePage';
 import { BenchmarksPage } from './pages/BenchmarksPage';
 import { SharedProfilePage } from './pages/SharedProfilePage';
+import { AppearancePage } from './pages/AppearancePage';
+import { ProfilePage } from './pages/ProfilePage';
+
+import './theme.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,16 +39,16 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Hide sidebar and standard navbar on public share and landing pages
+  // Hide sidebar and standard navbar on public share and landing/login pages if logged out
   const isPublicShare = location.pathname.startsWith('/share/');
   const isLanding = location.pathname === '/' || location.pathname === '/login';
 
   if (isPublicShare) {
-    return <main className="min-h-screen bg-[#090d16]">{children}</main>;
+    return <main className="min-h-screen bg-[var(--bg-app)] text-[var(--text-main)]">{children}</main>;
   }
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-blue-500 selection:text-white">
+    <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-main)] flex flex-col selection:bg-[var(--primary)] selection:text-white transition-colors">
       <Navbar
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         isSidebarOpen={isSidebarOpen}
@@ -54,6 +64,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {children}
         </main>
       </div>
+      <CommandPalette />
+      <OnboardingTour />
     </div>
   );
 };
@@ -62,23 +74,29 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <BrowserRouter>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/analyze" element={<AnalyzePage />} />
-              <Route path="/analysis/:id" element={<AnalysisResultPage />} />
-              <Route path="/roadmaps/:id" element={<RoadmapPage />} />
-              <Route path="/interview/:id" element={<InterviewPage />} />
-              <Route path="/multi-compare" element={<MultiComparePage />} />
-              <Route path="/benchmarks" element={<BenchmarksPage />} />
-              <Route path="/share/:token" element={<SharedProfilePage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
+        <ThemeProvider>
+          <DashboardProvider>
+            <BrowserRouter>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/analyze" element={<AnalyzePage />} />
+                  <Route path="/analysis/:id" element={<AnalysisResultPage />} />
+                  <Route path="/roadmaps/:id" element={<RoadmapPage />} />
+                  <Route path="/interview/:id" element={<InterviewPage />} />
+                  <Route path="/multi-compare" element={<MultiComparePage />} />
+                  <Route path="/benchmarks" element={<BenchmarksPage />} />
+                  <Route path="/appearance" element={<AppearancePage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/share/:token" element={<SharedProfilePage />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </DashboardProvider>
+        </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

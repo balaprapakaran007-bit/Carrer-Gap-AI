@@ -1,0 +1,135 @@
+/* Multi-Color Dynamic Theme System */
+:root {
+  /* Default: Ocean Blue (#2563EB) */
+  --primary-h: 221;
+  --primary-s: 83%;
+  --primary-l: 53%;
+  --primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+  --primary-light: hsl(var(--primary-h), var(--primary-s), 65%);
+  --primary-dark: hsl(var(--primary-h), var(--primary-s), 42%);
+  --primary-muted: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.15);
+  --primary-glow: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.25);
+  --accent: #38bdf8;
+
+  /* Dark Mode Default Base */
+  --bg-app: #080c14;
+  --bg-sidebar: #0b111c;
+  --bg-surface: #101826;
+  --bg-surface-elevated: #152238;
+  --bg-surface-glass: rgba(16, 24, 38, 0.7);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-highlight: rgba(255, 255, 255, 0.16);
+
+  --text-main: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  /* Density: Comfortable Default */
+  --card-padding: 1.5rem;
+  --gap-size: 1.25rem;
+  --row-py: 0.875rem;
+
+  /* Focus & Radius */
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.5rem;
+  --focus-ring: 0 0 0 2px var(--primary);
+}
+
+/* Light Mode Overrides */
+html[data-mode="light"] {
+  --bg-app: #f8fafc;
+  --bg-sidebar: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f8fafc;
+  --bg-surface-glass: rgba(255, 255, 255, 0.85);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-highlight: rgba(0, 0, 0, 0.14);
+
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+}
+
+/* Compact Density Mode */
+html[data-density="compact"] {
+  --card-padding: 1rem;
+  --gap-size: 0.875rem;
+  --row-py: 0.5rem;
+}
+
+/* High Contrast Mode */
+html[data-contrast="high"] {
+  --border-subtle: rgba(255, 255, 255, 0.28);
+  --border-highlight: rgba(255, 255, 255, 0.45);
+  --text-secondary: #cbd5e1;
+}
+
+html[data-mode="light"][data-contrast="high"] {
+  --border-subtle: rgba(0, 0, 0, 0.3);
+  --border-highlight: rgba(0, 0, 0, 0.5);
+  --text-secondary: #1e293b;
+}
+
+/* Reduced Motion Mode */
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Preset Themes Color HSL Maps */
+html[data-theme="ocean"] {
+  --primary-h: 221; --primary-s: 83%; --primary-l: 53%;
+}
+html[data-theme="emerald"] {
+  --primary-h: 160; --primary-s: 84%; --primary-l: 39%;
+}
+html[data-theme="violet"] {
+  --primary-h: 262; --primary-s: 83%; --primary-l: 58%;
+}
+html[data-theme="sunset"] {
+  --primary-h: 24; --primary-s: 95%; --primary-l: 53%;
+}
+html[data-theme="rose"] {
+  --primary-h: 347; --primary-s: 77%; --primary-l: 50%;
+}
+html[data-theme="cyan"] {
+  --primary-h: 189; --primary-s: 94%; --primary-l: 43%;
+}
+html[data-theme="indigo"] {
+  --primary-h: 239; --primary-s: 84%; --primary-l: 59%;
+}
+html[data-theme="monochrome"] {
+  --primary-h: 215; --primary-s: 16%; --primary-l: 47%;
+}
+
+/* Common Dynamic Utility Classes */
+.theme-bg-app { background-color: var(--bg-app); }
+.theme-bg-surface { background-color: var(--bg-surface); }
+.theme-bg-elevated { background-color: var(--bg-surface-elevated); }
+.theme-bg-sidebar { background-color: var(--bg-sidebar); }
+.theme-border { border-color: var(--border-subtle); }
+.theme-border-highlight { border-color: var(--border-highlight); }
+.theme-text-main { color: var(--text-main); }
+.theme-text-muted { color: var(--text-muted); }
+.theme-text-secondary { color: var(--text-secondary); }
+
+.theme-primary-bg { background-color: var(--primary); }
+.theme-primary-text { color: var(--primary); }
+.theme-primary-border { border-color: var(--primary); }
+.theme-primary-muted-bg { background-color: var(--primary-muted); }
+.theme-primary-glow { box-shadow: 0 0 20px -3px var(--primary-glow); }
+
+.theme-btn-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+.theme-btn-primary:hover {
+  background-color: var(--primary-light);
+  box-shadow: 0 0 15px -2px var(--primary-glow);
+}

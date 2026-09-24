@@ -1,238 +1,428 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useDashboard } from '../context/DashboardContext';
+import { useTheme } from '../context/ThemeContext';
 import { api } from '../services/api';
-import { FullAnalysisResult, StreakInfo } from '../types';
+import { FullAnalysisResult, SkillAnalysisItem, ProjectGapItem } from '../types';
+
+import { CareerReadinessRing } from '../components/CareerReadinessRing';
+import { CareerMomentumCard } from '../components/CareerMomentumCard';
+import { SkillIntelligence } from '../components/SkillIntelligence';
+import { SkillGapVisualizer } from '../components/SkillGapVisualizer';
+import { NextBestActionCard } from '../components/NextBestActionCard';
+import { TargetRoleCards } from '../components/TargetRoleCards';
+import { CareerProgressChart } from '../components/CareerProgressChart';
+import { RecentActivityTimeline } from '../components/RecentActivityTimeline';
+import { AICareerInsightCard } from '../components/AICareerInsightCard';
+import { FirstRunChecklist } from '../components/FirstRunChecklist';
+import { SkillDetailDrawer } from '../components/SkillDetailDrawer';
+import { ProjectPlanModal } from '../components/ProjectPlanModal';
+
 import {
-  Sparkles, Flame, Award, ArrowRight, CheckCircle2, AlertTriangle,
-  XCircle, MapPin, Mic, Layers, BarChart3, Clock, TrendingUp
+  Sparkles,
+  ArrowRight,
+  ChevronDown,
+  Upload,
+  Layers,
+  SlidersHorizontal,
+  FileDown
 } from 'lucide-react';
-import {
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, RadarChart,
-  PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
-} from 'recharts';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { theme } = useTheme();
+  const {
+    activeRoleId,
+    setActiveRoleId,
+    availableRoles,
+    isDemoMode,
+    dashboardLayout,
+    toggleWidgetVisibility
+  } = useDashboard();
+
   const [analyses, setAnalyses] = useState<FullAnalysisResult[]>([]);
-  const [streak, setStreak] = useState<StreakInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedSkill, setSelectedSkill] = useState<SkillAnalysisItem | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectGapItem | null>(null);
+  const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    const loadDashboard = async () => {
+    const loadDashboardData = async () => {
       try {
-        const [anList, skillData] = await Promise.all([
-          api.listAnalyses(),
-          api.getSkillProgress()
-        ]);
+        setLoading(true);
+        const anList = await api.listAnalyses();
         setAnalyses(anList);
-        setStreak(skillData.streak);
       } catch (err) {
-        console.error(err);
+        console.error('Error loading dashboard data:', err);
       } finally {
         setLoading(false);
       }
     };
-    loadDashboard();
+    loadDashboardData();
   }, []);
 
-  const chartData = [
-    { subject: 'Python', candidate: 95, target: 90 },
-    { subject: 'PyTorch', candidate: 85, target: 85 },
-    { subject: 'SQL', candidate: 90, target: 80 },
-    { subject: 'Docker', candidate: 30, target: 85 },
-    { subject: 'FastAPI', candidate: 40, target: 80 },
-    { subject: 'AWS', candidate: 35, target: 75 },
-    { subject: 'RAG', candidate: 80, target: 80 },
+  const handleExportPDF = () => {
+    setIsExporting(true);
+    setTimeout(() => {
+      window.print();
+      setIsExporting(false);
+    }, 400);
+  };
+
+  const currentAnalysis = analyses.find((a) => a.id === activeRoleId) || analyses[0];
+  const readiness = currentAnalysis ? currentAnalysis.readinessScore : 78;
+  const targetCompany = currentAnalysis ? currentAnalysis.jobCompany : 'AI Nexus Corp';
+
+  const demoSkills: SkillAnalysisItem[] = (currentAnalysis && (currentAnalysis as any).skillBreakdown) || [
+    {
+      skill: 'Python',
+      status: 'Matched',
+      importance: 'High',
+      evidenceLevel: 'Strong',
+      matchedResumeText: 'Developed production data pipelines and LLM inference wrappers using Python 3.11',
+      whyItMatters: 'Foundational language for MLE architectures and backend microservices.',
+      recommendation: 'Solid evidence. Focus on concurrency & profiling.'
+    },
+    {
+      skill: 'SQL',
+      status: 'Matched',
+      importance: 'High',
+      evidenceLevel: 'Strong',
+      matchedResumeText: 'Authored complex analytic queries and window functions over 50M+ rows',
+      whyItMatters: 'Essential for feature engineering and training dataset extraction.',
+      recommendation: 'Benchmark query plans and data warehouse structures.'
+    },
+    {
+      skill: 'PyTorch',
+      status: 'Matched',
+      importance: 'High',
+      evidenceLevel: 'Strong',
+      matchedResumeText: 'Fine-tuned Llama-3 and BERT models with LoRA/QLoRA in PyTorch',
+      whyItMatters: 'Core deep learning framework required for custom model pipelines.',
+      recommendation: 'Add distributed multi-GPU training benchmarks.'
+    },
+    {
+      skill: 'RAG Architecture',
+      status: 'Matched',
+      importance: 'High',
+      evidenceLevel: 'Strong',
+      matchedResumeText: 'Constructed hybrid vector search with Pinecone and LangChain',
+      whyItMatters: 'Top differentiator for modern generative AI applications.',
+      recommendation: 'Demonstrate evaluation harness (Ragas / TruLens).'
+    },
+    {
+      skill: 'FastAPI',
+      status: 'Weak',
+      importance: 'Medium',
+      evidenceLevel: 'Moderate',
+      matchedResumeText: 'Built simple REST endpoints for machine learning models',
+      whyItMatters: 'Needed for high-throughput model serving microservices.',
+      recommendation: 'Add async handlers, Pydantic v2 schemas, and latency tests.'
+    },
+    {
+      skill: 'Docker',
+      status: 'Missing',
+      importance: 'High',
+      evidenceLevel: 'None',
+      matchedResumeText: '',
+      whyItMatters: 'Critical gap: model containerization & reproducible runtime dependencies.',
+      recommendation: 'Containerize an ML API with multi-stage build and GPU runtime.'
+    },
+    {
+      skill: 'AWS Cloud',
+      status: 'Missing',
+      importance: 'Medium',
+      evidenceLevel: 'None',
+      matchedResumeText: '',
+      whyItMatters: 'Cloud infrastructure deployment for model endpoints.',
+      recommendation: 'Deploy containerized endpoint on ECS or SageMaker.'
+    }
   ];
 
+  const matchedCount = demoSkills.filter(s => s.status === 'Matched').length;
+  const missingCount = demoSkills.filter(s => s.status === 'Missing').length;
+  const weakCount = demoSkills.filter(s => s.status === 'Weak').length;
+
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 selection:bg-blue-500 selection:text-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 animate-in fade-in duration-200">
       
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400">Candidate Workspace</span>
-          <h1 className="text-2xl sm:text-3xl font-black text-white mt-0.5">
-            Welcome back, {user?.name || 'Alex'}
-          </h1>
-          <p className="text-xs text-slate-400">
-            Track your job readiness, close skill gaps, and practice interview questions.
-          </p>
-        </div>
+      {/* 1. HERO SECTION (Section 6 & 6A) */}
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 sm:p-8 shadow-sm">
+        <div 
+          className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full blur-3xl opacity-15"
+          style={{ backgroundColor: 'var(--primary)' }}
+        />
 
-        <div className="flex items-center gap-3">
-          <Link
-            to="/analyze"
-            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-500/20 flex items-center gap-2 transition"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>New Job Analysis</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Top 4 Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Target Roles Analyzed</span>
-          <div className="text-2xl font-black text-white">{analyses.length || 1}</div>
-          <p className="text-[11px] text-slate-500">Across 2 target companies</p>
-        </div>
-
-        <div className="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Average Readiness</span>
-          <div className="text-2xl font-black text-blue-400">78%</div>
-          <p className="text-[11px] text-emerald-400 flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" />
-            <span>+14% from initial profile</span>
-          </p>
-        </div>
-
-        <div className="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Verified Strengths</span>
-          <div className="text-2xl font-black text-emerald-400">12</div>
-          <p className="text-[11px] text-slate-500">Python, SQL, PyTorch, RAG</p>
-        </div>
-
-        <div className="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">High Priority Gaps</span>
-          <div className="text-2xl font-black text-rose-400">4</div>
-          <p className="text-[11px] text-slate-500">Docker, FastAPI, AWS</p>
-        </div>
-      </div>
-
-      {/* Momentum & Gamification Streak Widget */}
-      <div className="p-6 rounded-3xl border border-amber-500/20 bg-gradient-to-r from-amber-500/10 via-slate-900/80 to-slate-900/80 backdrop-blur-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-            <Flame className="w-6 h-6 fill-amber-400" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-white">5-Day Learning Streak Active!</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300">🔥 On Fire</span>
-            </div>
-            <p className="text-xs text-slate-300 mt-1">
-              You completed 2 roadmap milestones this week. Next milestone: <strong className="text-amber-300">"Docker Ready"</strong> badge (1 step remaining).
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200">
-            <Award className="w-4 h-4 text-blue-400" />
-            <span>2 Badges Earned</span>
-          </div>
-          <Link
-            to="/roadmaps/demo-analysis-ml-01"
-            className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5"
-          >
-            <span>Continue Roadmap</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </div>
-
-      {/* Main Grid: Recent Analyses & Skill Radar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left 2 Cols: Recent Analyses */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-100">Target Role Analyses</h3>
-            <Link to="/analyze" className="text-xs text-blue-400 hover:text-blue-300 transition">
-              + Add Target Job
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            {analyses.length === 0 ? (
-              <div className="p-8 rounded-2xl border border-slate-800 bg-slate-900/30 text-center text-xs text-slate-400">
-                No analyses created yet. Click "New Job Analysis" to start!
-              </div>
-            ) : (
-              analyses.map((an) => (
-                <Link
-                  key={an.id}
-                  to={`/analysis/${an.id}`}
-                  className="p-5 rounded-2xl border border-slate-800/80 bg-slate-900/40 hover:border-blue-500/40 hover:bg-slate-900/70 transition block space-y-3 group"
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+          <div className="space-y-3 max-w-2xl">
+            {/* Target Role Switcher (6A) */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-[var(--text-muted)]">Target Role:</span>
+              <div className="relative inline-block">
+                <select
+                  value={activeRoleId}
+                  onChange={(e) => setActiveRoleId(e.target.value)}
+                  className="appearance-none rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] py-1.5 pl-3 pr-8 text-xs font-bold text-[var(--text-main)] shadow-sm focus:outline-none focus:border-[var(--primary)] cursor-pointer"
                 >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-white text-base group-hover:text-blue-400 transition">
-                          {an.jobTitle}
-                        </h4>
-                        <span className="text-xs text-slate-400">• {an.jobCompany}</span>
-                      </div>
-                      <p className="text-xs text-slate-400 line-clamp-1 mt-1">
-                        {an.summaryParagraph}
-                      </p>
-                    </div>
+                  {availableRoles.map((role) => (
+                    <option key={role.id} value={role.id}>
+                      {role.title} ({role.company})
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-2.5 h-3.5 w-3.5 text-[var(--text-muted)]" />
+              </div>
 
-                    <div className="text-right shrink-0">
-                      <span className="text-2xl font-black text-blue-400">{an.readinessScore}%</span>
-                      <span className="block text-[10px] text-slate-500 uppercase font-semibold">Match</span>
-                    </div>
-                  </div>
+              {isDemoMode && (
+                <span 
+                  className="rounded-full px-2.5 py-0.5 text-[10px] font-bold border"
+                  style={{
+                    backgroundColor: 'var(--primary-muted)',
+                    color: 'var(--primary)',
+                    borderColor: 'var(--primary)'
+                  }}
+                >
+                  Live Intelligence Demo
+                </span>
+              )}
+            </div>
 
-                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/60 text-xs">
-                    <span className="inline-flex items-center gap-1 text-emerald-400">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      {an.matchedCount} Matched
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-rose-400">
-                      <XCircle className="w-3.5 h-3.5" />
-                      {an.missingCount} Missing
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-amber-400">
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      {an.weakEvidenceCount} Weak Evidence
-                    </span>
-                  </div>
-                </Link>
-              ))
-            )}
+            {/* Greeting & Headline */}
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-main)]">
+                Good morning, {user?.name?.split(' ')[0] || 'Alex'} 👋
+              </h1>
+              <p className="text-sm font-medium text-[var(--text-muted)] mt-1">
+                Your career readiness is moving forward. You're <strong className="text-[var(--text-main)]">{missingCount} skills</strong> away from your target role at <strong className="text-[var(--text-main)]">{targetCompany}</strong>.
+              </p>
+            </div>
+
+            {/* Progress CTA */}
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <div 
+                className="flex items-center gap-2 rounded-xl px-3 py-1.5 border"
+                style={{
+                  backgroundColor: 'var(--primary-muted)',
+                  borderColor: 'var(--primary)',
+                  color: 'var(--primary)'
+                }}
+              >
+                <span className="text-xs font-bold">{readiness}% Job Readiness</span>
+                <span className="text-[11px] font-semibold text-emerald-400">+14% this month</span>
+              </div>
+
+              <Link
+                to={`/roadmaps/${currentAnalysis?.id || 'demo-analysis-ml-01'}`}
+                className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white shadow-md transition hover:opacity-90"
+                style={{ backgroundColor: 'var(--primary)' }}
+              >
+                <span>Continue Career Roadmap</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Actions & Header Tools */}
+          <div className="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end gap-2 shrink-0">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportPDF}
+                disabled={isExporting}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] text-xs font-medium text-[var(--text-main)] hover:border-[var(--border-strong)] transition"
+                title="Export report summary as printable PDF"
+              >
+                <FileDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                <span>{isExporting ? 'Preparing...' : 'Export Report'}</span>
+              </button>
+
+              <button
+                onClick={() => setIsCustomizeOpen(!isCustomizeOpen)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] text-xs font-medium text-[var(--text-main)] hover:border-[var(--border-strong)] transition"
+                title="Customize dashboard layout"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                <span>Customize</span>
+              </button>
+            </div>
+
+            {/* Quick Actions Toolbar */}
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <Link
+                to="/analyze"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] text-xs font-semibold text-[var(--text-main)] hover:border-[var(--primary)] transition"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[var(--primary)]" />
+                <span>Analyze Job</span>
+              </Link>
+              <Link
+                to="/analyze?tab=resume"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] text-xs font-semibold text-[var(--text-main)] hover:border-[var(--primary)] transition"
+              >
+                <Upload className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                <span>Upload Resume</span>
+              </Link>
+              <Link
+                to="/multi-compare"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-card)] text-xs font-semibold text-[var(--text-main)] hover:border-[var(--primary)] transition"
+              >
+                <Layers className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                <span>Compare Jobs</span>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Right Col: Competency Chart */}
-        <div className="p-6 rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">
-              Competency Alignment
-            </h3>
-            <span className="text-[10px] text-blue-400 font-semibold">AI/ML Engineer</span>
+        {/* Layout Customization Drawer / Panel */}
+        {isCustomizeOpen && (
+          <div className="mt-6 pt-4 border-t border-[var(--border-subtle)] animate-in fade-in duration-150">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold text-[var(--text-main)]">Customize Visible Dashboard Sections</span>
+              <button
+                onClick={() => setIsCustomizeOpen(false)}
+                className="text-[11px] text-[var(--primary)] font-semibold hover:underline"
+              >
+                Done
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: 'momentum' as const, label: 'Career Momentum' },
+                { id: 'skills' as const, label: 'Skill Gap Visualizer' },
+                { id: 'progress' as const, label: 'Career Progress Chart' },
+                { id: 'insight' as const, label: 'AI Career Insight' },
+                { id: 'activity' as const, label: 'Recent Activity' },
+              ].map((w) => (
+                <button
+                  key={w.id}
+                  onClick={() => toggleWidgetVisibility(w.id)}
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-medium transition ${
+                    dashboardLayout.find((item) => item.id === w.id)?.visible
+                      ? 'border-[var(--primary)] bg-[var(--primary-muted)] text-[var(--primary)] font-semibold'
+                      : 'border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)] opacity-60'
+                  }`}
+                >
+                  {dashboardLayout.find((item) => item.id === w.id)?.visible ? '✓ ' : '+ '}
+                  {w.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 2. GUIDED FIRST-RUN CHECKLIST */}
+      <FirstRunChecklist />
+
+      {/* 3. PRIMARY CORE SECTION: READINESS RING & NEXT BEST ACTION & MOMENTUM */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left: Interactive Career Readiness Ring */}
+        <div id="readiness-ring-section" className="lg:col-span-5">
+          <CareerReadinessRing
+            score={readiness}
+            matchedCount={matchedCount}
+            missingCount={missingCount}
+            weakCount={weakCount}
+            criticalCount={2}
+            analysisId={currentAnalysis?.id || 'demo-analysis-ml-01'}
+            roleTitle={currentAnalysis?.jobTitle || 'Machine Learning Engineer'}
+          />
+        </div>
+
+        {/* Right: Next Best Action & Career Momentum */}
+        <div className="lg:col-span-7 space-y-6">
+          <div id="next-action-section">
+            <NextBestActionCard analysisId={currentAnalysis?.id || 'demo-analysis-ml-01'} />
           </div>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={chartData}>
-                <PolarGrid stroke="#334155" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#334155" tick={{ fill: '#64748b', fontSize: 9 }} />
-                <Radar name="Candidate" dataKey="candidate" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.4} />
-                <Radar name="Target Job" dataKey="target" stroke="#a855f7" fill="#a855f7" fillOpacity={0.15} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="flex items-center justify-center gap-4 text-xs text-slate-400 pt-2 border-t border-slate-800/60">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-              <span>Your Profile</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
-              <span>Target Role Requirements</span>
-            </div>
-          </div>
+          {dashboardLayout.find((w) => w.id === 'momentum')?.visible && (
+            <CareerMomentumCard />
+          )}
         </div>
       </div>
+
+      {/* 4. SKILL INTELLIGENCE SECTION */}
+      <div id="skill-intelligence-section" className="space-y-4">
+        <SkillIntelligence
+          skills={demoSkills}
+          onSelectSkill={(skill) => setSelectedSkill(skill)}
+          onAddToRoadmap={(skillName: string) => {
+            navigate(`/roadmaps/${currentAnalysis?.id || 'demo-analysis-ml-01'}?seedSkill=${encodeURIComponent(skillName)}`);
+          }}
+        />
+      </div>
+
+      {/* 5. SKILL GAP COMPARISON VISUALIZER */}
+      {dashboardLayout.find((w) => w.id === 'skills')?.visible && (
+        <div>
+          <SkillGapVisualizer />
+        </div>
+      )}
+
+      {/* 6. AI STRATEGIC INSIGHT CARD */}
+      {dashboardLayout.find((w) => w.id === 'insight')?.visible && (
+        <div>
+          <AICareerInsightCard
+            insightText="Your strongest alignment is in Python, SQL and RAG. Your biggest opportunity is deployment experience. Building one Docker + FastAPI project could close two high-priority gaps simultaneously."
+            recommendedProjectTitle="Enterprise Document QA with Docker & FastAPI"
+            onOpenProject={() => setSelectedProject({
+              id: "proj-docker-fastapi",
+              title: "Enterprise Document QA with Docker & FastAPI",
+              description: "Build an end-to-end question answering pipeline containerized with Docker and served with FastAPI.",
+              closesSkills: ["Docker", "FastAPI", "Python"],
+              difficulty: "Intermediate",
+              estimatedDays: 4,
+              coreFeatures: ["Containerized deployment", "Async API endpoints", "Health checks"],
+              technologies: ["Docker", "FastAPI", "Python", "Uvicorn"],
+              implementationSteps: [
+                "Setup FastAPI with async endpoints",
+                "Create Dockerfile with multi-stage build",
+                "Add docker-compose for local DB and vector storage",
+                "Write automated integration tests"
+              ],
+              resumeBullet: "Engineered high-throughput containerized QA microservice handling 500+ QPS with Docker and FastAPI."
+            })}
+          />
+        </div>
+      )}
+
+      {/* 7. PROGRESS CHART & TARGET ROLES GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {dashboardLayout.find((w) => w.id === 'progress')?.visible && (
+          <div className="lg:col-span-7">
+            <CareerProgressChart />
+          </div>
+        )}
+
+        <div className={dashboardLayout.find((w) => w.id === 'progress')?.visible ? 'lg:col-span-5' : 'lg:col-span-12'}>
+          <TargetRoleCards analyses={analyses} />
+        </div>
+      </div>
+
+      {/* 8. RECENT ACTIVITY TIMELINE */}
+      {dashboardLayout.find((w) => w.id === 'activity')?.visible && (
+        <div>
+          <RecentActivityTimeline />
+        </div>
+      )}
+
+      {/* MODALS / DRAWERS */}
+      {selectedSkill && (
+        <SkillDetailDrawer
+          skill={selectedSkill}
+          onClose={() => setSelectedSkill(null)}
+          analysisId={currentAnalysis?.id || 'demo-analysis-ml-01'}
+        />
+      )}
+
+      {selectedProject && (
+        <ProjectPlanModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      )}
     </div>
   );
 };
