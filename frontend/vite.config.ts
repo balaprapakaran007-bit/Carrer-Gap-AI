@@ -10,12 +10,15 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024
+      },
       manifest: {
         name: 'CareerGap AI',
         short_name: 'CareerGap',
         description: "Don't just know your match. Know your next move.",
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
+        theme_color: '#4F46E5',
+        background_color: '#0B0B0D',
         display: 'standalone',
         icons: [
           {
