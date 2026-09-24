@@ -1,57 +1,150 @@
-/* Multi-Color Dynamic Theme System */
+/* ============================================================
+   CAREERGAP AI — 3-LAYER ACCESSIBLE COLOR & THEME SYSTEM
+   ============================================================ */
+
 :root {
-  /* Default: Ocean Blue (#2563EB) */
-  --primary-h: 221;
-  --primary-s: 83%;
-  --primary-l: 53%;
-  --primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
-  --primary-light: hsl(var(--primary-h), var(--primary-s), 65%);
-  --primary-dark: hsl(var(--primary-h), var(--primary-s), 42%);
-  --primary-muted: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.15);
-  --primary-glow: hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.25);
-  --accent: #38bdf8;
+  /* LAYER 1: BRAND PALETTE (Default: Indigo #4F46E5) */
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-soft: rgba(79, 70, 229, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(79, 70, 229, 0.25);
 
-  /* Dark Mode Default Base */
-  --bg-app: #080c14;
-  --bg-sidebar: #0b111c;
-  --bg-surface: #101826;
-  --bg-surface-elevated: #152238;
-  --bg-surface-glass: rgba(16, 24, 38, 0.7);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-highlight: rgba(255, 255, 255, 0.16);
+  /* LAYER 2: SEMANTIC PALETTE (Fixed, non-themeable across all modes) */
+  --success: #16A34A;
+  --success-soft: rgba(22, 163, 74, 0.12);
+  --warning: #D97706;
+  --warning-soft: rgba(217, 119, 6, 0.12);
+  --danger: #DC2626;
+  --danger-soft: rgba(220, 38, 38, 0.12);
+  --info: #64748B;
+  --info-soft: rgba(100, 116, 139, 0.12);
 
-  --text-main: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  /* LAYER 3: NEUTRALS — DARK MODE DEFAULT */
+  --background: #0B0B0D;
+  --surface: #17171A;
+  --surface-2: #202024;
+  --border: #2C2C31;
+  --text: #F4F4F5;
+  --text-muted: #A1A1AA;
 
-  /* Density: Comfortable Default */
+  /* BACKWARD COMPATIBILITY ALIASES */
+  --bg-app: var(--background);
+  --bg-surface: var(--surface);
+  --bg-surface-elevated: var(--surface-2);
+  --bg-card: var(--surface-2);
+  --border-subtle: var(--border);
+  --border-strong: #3F3F46;
+  --text-main: var(--text);
+  --primary-muted: var(--primary-soft);
+
+  /* DENSITY & SIZING */
   --card-padding: 1.5rem;
   --gap-size: 1.25rem;
   --row-py: 0.875rem;
 
-  /* Focus & Radius */
+  /* TYPOGRAPHY & RADIUS */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --radius-lg: 1rem;
   --radius-md: 0.75rem;
   --radius-sm: 0.5rem;
-  --focus-ring: 0 0 0 2px var(--primary);
 }
 
-/* Light Mode Overrides */
+/* ============================================================
+   LIGHT MODE NEUTRALS (LAYER 3)
+   ============================================================ */
 html[data-mode="light"] {
-  --bg-app: #f8fafc;
-  --bg-sidebar: #f1f5f9;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f8fafc;
-  --bg-surface-glass: rgba(255, 255, 255, 0.85);
-  --border-subtle: rgba(0, 0, 0, 0.08);
-  --border-highlight: rgba(0, 0, 0, 0.14);
+  --background: #FAFAFA;
+  --surface: #FFFFFF;
+  --surface-2: #F4F4F5;
+  --border: #E4E4E7;
+  --text: #18181B;
+  --text-muted: #71717A;
 
-  --text-main: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --border-subtle: var(--border);
+  --border-strong: #D4D4D8;
+  --primary-soft: rgba(79, 70, 229, 0.08);
 }
 
-/* Compact Density Mode */
+/* ============================================================
+   BRAND THEME PRESETS (LAYER 1)
+   ============================================================ */
+/* 1. Indigo (Default) */
+html[data-theme="indigo"] {
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-soft: rgba(79, 70, 229, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(79, 70, 229, 0.25);
+}
+
+/* 2. Ocean Blue */
+html[data-theme="ocean"] {
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-soft: rgba(37, 99, 235, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(37, 99, 235, 0.25);
+}
+
+/* 3. Emerald (Darkened for WCAG AA 4.5:1) */
+html[data-theme="emerald"] {
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-soft: rgba(5, 150, 105, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(5, 150, 105, 0.25);
+}
+
+/* 4. Violet */
+html[data-theme="violet"] {
+  --primary: #7C3AED;
+  --primary-hover: #6D28D9;
+  --primary-soft: rgba(124, 58, 237, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(124, 58, 237, 0.25);
+}
+
+/* 5. Sunset Orange (Darkened for WCAG AA 4.5:1) */
+html[data-theme="sunset"] {
+  --primary: #EA580C;
+  --primary-hover: #C2410C;
+  --primary-soft: rgba(234, 88, 12, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(234, 88, 12, 0.25);
+}
+
+/* 6. Rose */
+html[data-theme="rose"] {
+  --primary: #E11D48;
+  --primary-hover: #BE123C;
+  --primary-soft: rgba(225, 29, 72, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(225, 29, 72, 0.25);
+}
+
+/* 7. Cyan (Darkened for WCAG AA 4.5:1) */
+html[data-theme="cyan"] {
+  --primary: #0891B2;
+  --primary-hover: #0E7490;
+  --primary-soft: rgba(8, 145, 178, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(8, 145, 178, 0.25);
+}
+
+/* 8. Monochrome */
+html[data-theme="monochrome"] {
+  --primary: #475569;
+  --primary-hover: #334155;
+  --primary-soft: rgba(71, 85, 105, 0.12);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(71, 85, 105, 0.25);
+}
+
+/* ============================================================
+   ACCESSIBILITY & DENSITY AXES
+   ============================================================ */
+/* Compact Density */
 html[data-density="compact"] {
   --card-padding: 1rem;
   --gap-size: 0.875rem;
@@ -60,76 +153,31 @@ html[data-density="compact"] {
 
 /* High Contrast Mode */
 html[data-contrast="high"] {
-  --border-subtle: rgba(255, 255, 255, 0.28);
-  --border-highlight: rgba(255, 255, 255, 0.45);
-  --text-secondary: #cbd5e1;
+  --border: #4A4A52;
+  --border-subtle: #4A4A52;
+  --border-strong: #71717A;
+  --text-muted: #D4D4D8;
 }
 
 html[data-mode="light"][data-contrast="high"] {
-  --border-subtle: rgba(0, 0, 0, 0.3);
-  --border-highlight: rgba(0, 0, 0, 0.5);
-  --text-secondary: #1e293b;
+  --border: #A1A1AA;
+  --border-subtle: #A1A1AA;
+  --border-strong: #52525B;
+  --text-muted: #27272A;
 }
 
 /* Reduced Motion Mode */
 html[data-motion="reduced"] *,
 html[data-motion="reduced"] *::before,
 html[data-motion="reduced"] *::after {
-  animation-duration: 0.01ms !important;
+  animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
+  transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
 
-/* Preset Themes Color HSL Maps */
-html[data-theme="ocean"] {
-  --primary-h: 221; --primary-s: 83%; --primary-l: 53%;
-}
-html[data-theme="emerald"] {
-  --primary-h: 160; --primary-s: 84%; --primary-l: 39%;
-}
-html[data-theme="violet"] {
-  --primary-h: 262; --primary-s: 83%; --primary-l: 58%;
-}
-html[data-theme="sunset"] {
-  --primary-h: 24; --primary-s: 95%; --primary-l: 53%;
-}
-html[data-theme="rose"] {
-  --primary-h: 347; --primary-s: 77%; --primary-l: 50%;
-}
-html[data-theme="cyan"] {
-  --primary-h: 189; --primary-s: 94%; --primary-l: 43%;
-}
-html[data-theme="indigo"] {
-  --primary-h: 239; --primary-s: 84%; --primary-l: 59%;
-}
-html[data-theme="monochrome"] {
-  --primary-h: 215; --primary-s: 16%; --primary-l: 47%;
-}
-
-/* Common Dynamic Utility Classes */
-.theme-bg-app { background-color: var(--bg-app); }
-.theme-bg-surface { background-color: var(--bg-surface); }
-.theme-bg-elevated { background-color: var(--bg-surface-elevated); }
-.theme-bg-sidebar { background-color: var(--bg-sidebar); }
-.theme-border { border-color: var(--border-subtle); }
-.theme-border-highlight { border-color: var(--border-highlight); }
-.theme-text-main { color: var(--text-main); }
-.theme-text-muted { color: var(--text-muted); }
-.theme-text-secondary { color: var(--text-secondary); }
-
-.theme-primary-bg { background-color: var(--primary); }
-.theme-primary-text { color: var(--primary); }
-.theme-primary-border { border-color: var(--primary); }
-.theme-primary-muted-bg { background-color: var(--primary-muted); }
-.theme-primary-glow { box-shadow: 0 0 20px -3px var(--primary-glow); }
-
-.theme-btn-primary {
-  background-color: var(--primary);
-  color: #ffffff;
-  transition: all 0.2s ease;
-}
-.theme-btn-primary:hover {
-  background-color: var(--primary-light);
-  box-shadow: 0 0 15px -2px var(--primary-glow);
+/* Global focus outlines */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

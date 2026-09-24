@@ -1,46 +1,50 @@
 import React, { useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Compass,
-  Sparkles,
   Mail,
   Lock,
-  ArrowRight,
-  Eye,
-  EyeOff,
-  CheckCircle2,
+  User,
   AlertCircle,
-  Zap,
+  CheckCircle2,
+  Sparkles,
+  ShieldCheck,
   Target
 } from 'lucide-react';
 
-export const LoginPage: React.FC = () => {
+export const RegisterPage: React.FC = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const { loginWithEmail, loginWithGoogle, loginDemoUser, loading } = useAuth();
+  const { register, loginWithGoogle, loginDemoUser, loading } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = (location.state as any)?.from?.pathname || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please enter both email and password.');
+    if (!name || !email || !password) {
+      setError('Please fill in all required fields.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters.');
       return;
     }
     setError('');
     setSubmitting(true);
     try {
-      await loginWithEmail(email, password);
-      navigate(from, { replace: true });
+      await register(name, email, password);
+      navigate('/dashboard');
     } catch (err: any) {
-      setError(err?.message || 'Invalid email or password.');
+      setError(err?.message || 'Account registration failed.');
     } finally {
       setSubmitting(false);
     }
@@ -51,31 +55,24 @@ export const LoginPage: React.FC = () => {
     setSubmitting(true);
     try {
       await loginWithGoogle();
-      navigate(from, { replace: true });
+      navigate('/dashboard');
     } catch (err: any) {
-      setError('Google sign-in failed. Switched to demo mode.');
+      setError('Google Sign-In failed.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleDemoLogin = () => {
-    loginDemoUser();
-    navigate(from, { replace: true });
-  };
-
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[var(--background)] text-[var(--text)] transition-colors">
       
-      {/* LEFT PANEL: Visual Identity & Live Readiness Preview (Section 6) */}
+      {/* LEFT PANEL: Brand Info & Onboarding Value */}
       <div className="lg:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--border)] relative overflow-hidden bg-[var(--surface)]">
-        {/* Subtle ambient glow */}
         <div 
           className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full blur-3xl opacity-15"
           style={{ backgroundColor: 'var(--primary)' }}
         />
 
-        {/* Brand Header */}
         <div className="flex items-center gap-3 relative z-10">
           <div 
             className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-[var(--primary)]/20"
@@ -93,7 +90,6 @@ export const LoginPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Hero Copy & Live Preview Card */}
         <div className="my-10 space-y-6 relative z-10 max-w-lg">
           <div className="space-y-2">
             <span 
@@ -104,85 +100,49 @@ export const LoginPage: React.FC = () => {
                 color: 'var(--primary)'
               }}
             >
-              Don't just know your match. Know your next move.
+              Candidate Onboarding
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[var(--text)] leading-tight">
-              Turn your skill gaps into your next opportunity.
+              Build your career intelligence profile today.
             </h1>
             <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
-              AI analysis comparing your resume against job requirements, pinpointing weak evidence, and generating personalized career roadmaps.
+              Upload your verified experience, benchmark against real market demands, and let AI generate your step-by-step career roadmap.
             </p>
           </div>
 
-          {/* Miniature Live Readiness Preview Card */}
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-5 shadow-xl space-y-3.5">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-                <span className="text-xs font-bold text-[var(--text)]">Target Role Readiness</span>
+          <div className="space-y-3 pt-2">
+            {[
+              { title: 'Granular Skill Gap Analysis', desc: 'Pinpoints exact missing capabilities and weak resume proof.' },
+              { title: 'Data-Grounded Roadmaps', desc: 'Actionable milestones to close gaps in weeks, not years.' },
+              { title: 'Interactive Interview Simulator', desc: 'AI mock technical rounds tailored to your target job.' }
+            ].map((item, idx) => (
+              <div key={idx} className="flex items-start gap-3 p-3 rounded-xl border border-[var(--border)] bg-[var(--surface-2)]">
+                <CheckCircle2 className="w-4 h-4 text-[var(--success)] shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="text-xs font-bold text-[var(--text)]">{item.title}</h4>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-0.5">{item.desc}</p>
+                </div>
               </div>
-              <span className="text-[11px] font-bold text-[var(--success)] bg-[var(--success-soft)] px-2 py-0.5 rounded-full">
-                +14% This Month
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-2xl font-black" style={{ color: 'var(--primary)' }}>78%</span>
-                <span className="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Job Ready</span>
-              </div>
-              <div className="flex gap-1.5 text-[10px] font-semibold">
-                <span className="px-2 py-1 rounded-lg bg-[var(--success-soft)] text-[var(--success)]">12 Matched</span>
-                <span className="px-2 py-1 rounded-lg bg-[var(--warning-soft)] text-[var(--warning)]">3 Weak</span>
-                <span className="px-2 py-1 rounded-lg bg-[var(--danger-soft)] text-[var(--danger)]">4 Missing</span>
-              </div>
-            </div>
-
-            {/* Next Best Action Line */}
-            <div className="pt-2 border-t border-[var(--border)] flex items-center justify-between text-xs">
-              <span className="text-[11px] text-[var(--text-muted)] flex items-center gap-1.5 truncate">
-                <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <strong className="text-[var(--text)] truncate">Next: Docker Fundamentals</strong> (+8 pts)
-              </span>
-              <span className="text-[10px] font-bold text-[var(--primary)] shrink-0">Roadmap Step 1</span>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Footer Tagline */}
         <div className="text-[11px] text-[var(--text-muted)] relative z-10">
-          © {new Date().getFullYear()} CareerGap AI. Designed for high-velocity career engineering.
+          © {new Date().getFullYear()} CareerGap AI. All candidate data stored privately.
         </div>
       </div>
 
-      {/* RIGHT PANEL: Sign In Form (Section 6) */}
+      {/* RIGHT PANEL: Register Form */}
       <div className="lg:w-1/2 p-8 sm:p-12 lg:p-16 flex items-center justify-center bg-[var(--background)]">
         <div className="w-full max-w-md space-y-6">
           
           <div className="space-y-1">
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text)]">
-              Welcome back
+              Create your account
             </h2>
             <p className="text-xs text-[var(--text-muted)]">
-              Enter your credentials or test with instant demo access.
+              Start closing your skill gaps with precision AI coaching.
             </p>
-          </div>
-
-          {/* Quick 1-Click Demo Login */}
-          <button
-            onClick={handleDemoLogin}
-            type="button"
-            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white shadow-md flex items-center justify-center gap-2 transition hover:opacity-95"
-            style={{ backgroundColor: 'var(--primary)' }}
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>1-Click Hackathon Demo Login</span>
-          </button>
-
-          <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-[var(--border)]" />
-            <span className="flex-shrink mx-3 text-[10px] uppercase font-bold text-[var(--text-muted)]">Or continue with</span>
-            <div className="flex-grow border-t border-[var(--border)]" />
           </div>
 
           {/* Google Sign In */}
@@ -198,10 +158,15 @@ export const LoginPage: React.FC = () => {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
             </svg>
-            <span>Sign in with Google</span>
+            <span>Sign up with Google</span>
           </button>
 
-          {/* Form */}
+          <div className="relative flex py-1 items-center">
+            <div className="flex-grow border-t border-[var(--border)]" />
+            <span className="flex-shrink mx-3 text-[10px] uppercase font-bold text-[var(--text-muted)]">Or with email</span>
+            <div className="flex-grow border-t border-[var(--border)]" />
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] text-xs text-[var(--danger)] flex items-center gap-2">
@@ -209,6 +174,21 @@ export const LoginPage: React.FC = () => {
                 <span>{error}</span>
               </div>
             )}
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-[var(--text-muted)]">Full Name</label>
+              <div className="relative">
+                <User className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[var(--text-muted)]" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Alex Chen"
+                  required
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--primary)]"
+                />
+              </div>
+            </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-[var(--text-muted)]">Email Address</label>
@@ -225,33 +205,35 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[var(--text-muted)]">Password</label>
-                <Link
-                  to="/forgot-password"
-                  className="text-[11px] font-semibold text-[var(--primary)] hover:underline"
-                >
-                  Forgot password?
-                </Link>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[var(--text-muted)]" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-2.5 pl-10 pr-3 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--primary)]"
+                  />
+                </div>
               </div>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[var(--text-muted)]" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-2.5 pl-10 pr-10 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--primary)]"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-[var(--text-muted)] hover:text-[var(--text)]"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[var(--text-muted)]">Confirm</label>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[var(--text-muted)]" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-2.5 pl-10 pr-3 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--primary)]"
+                  />
+                </div>
               </div>
             </div>
 
@@ -261,18 +243,17 @@ export const LoginPage: React.FC = () => {
               className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white shadow-md flex items-center justify-center gap-2 transition hover:opacity-95 disabled:opacity-50"
               style={{ backgroundColor: 'var(--primary)' }}
             >
-              <span>{submitting ? 'Signing in...' : 'Sign In →'}</span>
+              <span>{submitting ? 'Creating account...' : 'Create my account →'}</span>
             </button>
           </form>
 
-          {/* Link to Register */}
           <div className="text-center pt-2 border-t border-[var(--border)]">
-            <span className="text-xs text-[var(--text-muted)]">Don't have an account yet? </span>
+            <span className="text-xs text-[var(--text-muted)]">Already have an account? </span>
             <Link
-              to="/register"
+              to="/login"
               className="text-xs font-semibold text-[var(--primary)] hover:underline"
             >
-              Create an account
+              Sign in
             </Link>
           </div>
         </div>

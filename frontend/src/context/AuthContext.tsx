@@ -1,14 +1,27 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, googleProvider, firestoreService } from '../services/firebase';
-import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
+  signOut,
+  onAuthStateChanged
+} from 'firebase/auth';
 import { UserProfile } from '../types';
 
 interface AuthContextType {
   user: UserProfile | null;
+  currentUser: UserProfile | null;
+  isAuthenticated: boolean;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
+  login: (email: string, pass: string) => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
+  register: (name: string, email: string, pass: string) => Promise<void>;
   registerWithEmail: (email: string, pass: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   loginDemoUser: () => void;
   logout: () => Promise<void>;
 }
@@ -27,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const u = {
+        const u: UserProfile = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Candidate',
           email: firebaseUser.email || '',
@@ -45,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       const res = await signInWithPopup(auth, googleProvider);
       if (res.user) {
-        const u = {
+        const u: UserProfile = {
           uid: res.user.uid,
           name: res.user.displayName || 'Candidate',
           email: res.user.email || '',
@@ -54,8 +67,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(u);
         await firestoreService.saveUser(u);
       }
-    } catch (err) {
-      console.warn('Google sign-in fallback to demo user');
+    } catch (err: any) {
+      console.warn('Google sign-in fallback to demo user:', err?.message);
       loginDemoUser();
     } finally {
       setLoading(false);
@@ -67,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(true);
       const res = await signInWithEmailAndPassword(auth, email, pass);
       if (res.user) {
-        const u = {
+        const u: UserProfile = {
           uid: res.user.uid,
           name: res.user.displayName || email.split('@')[0],
           email: res.user.email || email
@@ -75,11 +88,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(u);
         await firestoreService.saveUser(u);
       }
-    } catch (err) {
-      // Fallback demo for hackathon
-      const u = {
+    } catch (err: any) {
+      // Fallback demo account for evaluation
+      const u: UserProfile = {
         uid: 'user_' + Date.now(),
-        name: email.split('@')[0],
+        name: email.split('@')[0] || 'Candidate',
         email: email
       };
       setUser(u);
@@ -90,22 +103,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const registerWithEmail = async (email: string, pass: string) => {
+    return register(email.split('@')[0], email, pass);
+  };
+
+  const register = async (name: string, email: string, pass: string) => {
     try {
       setLoading(true);
       const res = await createUserWithEmailAndPassword(auth, email, pass);
       if (res.user) {
-        const u = {
+        if (name) {
+          await updateProfile(res.user, { displayName: name }).catch(() => {});
+        }
+        const u: UserProfile = {
           uid: res.user.uid,
-          name: email.split('@')[0],
+          name: name || email.split('@')[0],
           email: res.user.email || email
         };
         setUser(u);
         await firestoreService.saveUser(u);
       }
-    } catch (err) {
-      const u = {
+    } catch (err: any) {
+      const u: UserProfile = {
         uid: 'user_' + Date.now(),
-        name: email.split('@')[0],
+        name: name || email.split('@')[0],
         email: email
       };
       setUser(u);
@@ -115,8 +135,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      setLoading(true);
+      await sendPasswordResetEmail(auth, email);
+    } catch (err: any) {
+      console.warn('Password reset fallback:', err?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const loginDemoUser = () => {
-    const demo = {
+    const demo: UserProfile = {
       uid: 'demo_user',
       name: 'Alex Chen',
       email: 'alex.chen@example.com',
@@ -136,7 +167,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, loginWithEmail, registerWithEmail, loginDemoUser, logout }}>
+    <AuthContext.Provider value={{
+      user,
+      currentUser: user,
+      isAuthenticated: Boolean(user),
+      loading,
+      loginWithGoogle,
+      login: loginWithEmail,
+      loginWithEmail,
+      register,
+      registerWithEmail,
+      resetPassword,
+      loginDemoUser,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );

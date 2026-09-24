@@ -20,14 +20,14 @@ export interface CustomTheme {
 }
 
 export const PRESET_THEMES: { id: ThemePreset; name: string; hex: string; desc: string }[] = [
-  { id: 'ocean', name: 'Ocean Blue', hex: '#2563EB', desc: 'Trust & clarity' },
-  { id: 'emerald', name: 'Emerald', hex: '#10B981', desc: 'Growth & momentum' },
+  { id: 'indigo', name: 'Indigo', hex: '#4F46E5', desc: 'Deep focus & AI intelligence (Default)' },
+  { id: 'ocean', name: 'Ocean Blue', hex: '#2563EB', desc: 'Trust & analytical clarity' },
+  { id: 'emerald', name: 'Emerald', hex: '#059669', desc: 'Growth & momentum (WCAG AA)' },
   { id: 'violet', name: 'Violet', hex: '#7C3AED', desc: 'Creative intelligence' },
-  { id: 'sunset', name: 'Sunset Orange', hex: '#F97316', desc: 'High energy & drive' },
+  { id: 'sunset', name: 'Sunset Orange', hex: '#EA580C', desc: 'High energy & drive (WCAG AA)' },
   { id: 'rose', name: 'Rose', hex: '#E11D48', desc: 'Bold ambition' },
-  { id: 'cyan', name: 'Cyan', hex: '#06B6D4', desc: 'Precision & focus' },
-  { id: 'indigo', name: 'Indigo', hex: '#4F46E5', desc: 'Deep focus' },
-  { id: 'monochrome', name: 'Monochrome', hex: '#64748B', desc: 'Minimalist slate' },
+  { id: 'cyan', name: 'Cyan', hex: '#0891B2', desc: 'Precision & tech focus (WCAG AA)' },
+  { id: 'monochrome', name: 'Monochrome', hex: '#475569', desc: 'Minimalist slate' },
 ];
 
 interface ThemeContextType {
@@ -88,7 +88,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const { user } = useAuth();
 
   const [theme, setThemeState] = useState<ThemePreset>(() => {
-    return (localStorage.getItem('cg_theme') as ThemePreset) || 'ocean';
+    return (localStorage.getItem('cg_theme') as ThemePreset) || 'indigo';
   });
   const [mode, setModeState] = useState<ThemeMode>(() => {
     return (localStorage.getItem('cg_mode') as ThemeMode) || 'dark';

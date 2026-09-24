@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { DashboardProvider } from './context/DashboardContext';
+import { ToastProvider } from './context/ToastContext';
 
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
@@ -12,6 +13,8 @@ import { OnboardingTour } from './components/OnboardingTour';
 
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { AnalyzePage } from './pages/AnalyzePage';
 import { AnalysisResultPage } from './pages/AnalysisResultPage';
@@ -39,28 +42,28 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Hide sidebar and standard navbar on public share and landing/login pages if logged out
+  // Hide sidebar and standard navbar on public share and landing/auth pages if desired
   const isPublicShare = location.pathname.startsWith('/share/');
-  const isLanding = location.pathname === '/' || location.pathname === '/login';
+  const isAuthOrLanding = ['/', '/login', '/register', '/forgot-password'].includes(location.pathname);
 
   if (isPublicShare) {
-    return <main className="min-h-screen bg-[var(--bg-app)] text-[var(--text-main)]">{children}</main>;
+    return <main className="min-h-screen bg-[var(--background)] text-[var(--text)]">{children}</main>;
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-main)] flex flex-col selection:bg-[var(--primary)] selection:text-white transition-colors">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--text)] flex flex-col selection:bg-[var(--primary)] selection:text-white transition-colors">
       <Navbar
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         isSidebarOpen={isSidebarOpen}
       />
       <div className="flex-1 flex">
-        {user && !isLanding && (
+        {user && !isAuthOrLanding && (
           <Sidebar
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
           />
         )}
-        <main className={`flex-1 transition-all duration-200 ${user && !isLanding ? 'lg:pl-64' : ''}`}>
+        <main className={`flex-1 transition-all duration-200 ${user && !isAuthOrLanding ? 'lg:pl-64' : ''}`}>
           {children}
         </main>
       </div>
@@ -76,25 +79,29 @@ export default function App() {
       <AuthProvider>
         <ThemeProvider>
           <DashboardProvider>
-            <BrowserRouter>
-              <Layout>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/analyze" element={<AnalyzePage />} />
-                  <Route path="/analysis/:id" element={<AnalysisResultPage />} />
-                  <Route path="/roadmaps/:id" element={<RoadmapPage />} />
-                  <Route path="/interview/:id" element={<InterviewPage />} />
-                  <Route path="/multi-compare" element={<MultiComparePage />} />
-                  <Route path="/benchmarks" element={<BenchmarksPage />} />
-                  <Route path="/appearance" element={<AppearancePage />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/share/:token" element={<SharedProfilePage />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </Layout>
-            </BrowserRouter>
+            <ToastProvider>
+              <BrowserRouter>
+                <Layout>
+                  <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/analyze" element={<AnalyzePage />} />
+                    <Route path="/analysis/:id" element={<AnalysisResultPage />} />
+                    <Route path="/roadmaps/:id" element={<RoadmapPage />} />
+                    <Route path="/interview/:id" element={<InterviewPage />} />
+                    <Route path="/multi-compare" element={<MultiComparePage />} />
+                    <Route path="/benchmarks" element={<BenchmarksPage />} />
+                    <Route path="/appearance" element={<AppearancePage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/share/:token" element={<SharedProfilePage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </Layout>
+              </BrowserRouter>
+            </ToastProvider>
           </DashboardProvider>
         </ThemeProvider>
       </AuthProvider>
