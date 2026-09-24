@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import {
   Compass,
   Sparkles,
@@ -21,7 +20,9 @@ import {
   Loader2,
   ShieldCheck,
   Flame,
-  ArrowDownRight
+  ArrowDownRight,
+  Cpu,
+  Workflow
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -33,7 +34,6 @@ export const LoginPage: React.FC = () => {
   const [authSuccess, setAuthSuccess] = useState(false);
 
   const { loginWithEmail, loginWithGoogle, loginDemoUser, loading } = useAuth();
-  const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -84,318 +84,249 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[var(--background)] text-[var(--text)] transition-colors relative overflow-hidden selection:bg-[var(--primary)] selection:text-white">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-[#07111F] text-[#F8FAFC] transition-colors relative overflow-hidden selection:bg-[#06D6FF] selection:text-[#07111F]">
       
-      {/* BACKGROUND MESH GRADIENTS (Section 1) */}
-      <div 
-        className="pointer-events-none absolute -left-32 -top-32 h-[32rem] w-[32rem] rounded-full blur-3xl opacity-15"
-        style={{ backgroundColor: 'var(--primary)' }}
-      />
-      <div 
-        className="pointer-events-none absolute right-10 bottom-10 h-[28rem] w-[28rem] rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: 'var(--primary)' }}
-      />
-      <div 
-        className="pointer-events-none absolute left-1/3 top-1/2 h-96 w-96 -translate-y-1/2 rounded-full blur-3xl opacity-8"
-        style={{ backgroundColor: 'var(--primary)' }}
-      />
+      {/* 3. HAVENMATCH-INSPIRED LAYERED ATMOSPHERIC GLOWS */}
+      <div className="pointer-events-none absolute -left-20 -top-20 h-[36rem] w-[36rem] rounded-full bg-[#1677FF]/15 blur-3xl" />
+      <div className="pointer-events-none absolute right-1/4 top-1/3 h-[28rem] w-[28rem] rounded-full bg-[#06D6FF]/10 blur-3xl" />
+      <div className="pointer-events-none absolute right-10 bottom-10 h-[30rem] w-[30rem] rounded-full bg-[#14B8A6]/10 blur-3xl" />
+
+      {/* 4. SUBTLE AI NETWORK BACKGROUND LINES */}
+      <div className="pointer-events-none absolute inset-0 opacity-15 overflow-hidden">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="network-grid" width="80" height="80" patternUnits="userSpaceOnUse">
+              <circle cx="40" cy="40" r="1.5" fill="#06D6FF" opacity="0.6" />
+              <path d="M 40 40 L 80 80 M 40 40 L 0 80 M 40 40 L 80 0 M 40 40 L 0 0" stroke="#1E334D" strokeWidth="0.8" strokeDasharray="3,3" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#network-grid)" />
+        </svg>
+      </div>
 
       {/* ============================================================
-          LEFT PANEL (55% on Desktop): Interactive Product Showcase
+          LEFT PANEL (55% on Desktop): Haven-Style Product Showcase
           ============================================================ */}
-      <div className="w-full lg:w-[55%] p-6 sm:p-10 lg:p-14 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[var(--border)] relative z-10">
+      <div className="w-full lg:w-[55%] p-6 sm:p-10 lg:p-14 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#1E334D] relative z-10">
         
-        {/* Brand Header */}
+        {/* Top Brand Header */}
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-105"
-              style={{ backgroundColor: 'var(--primary)', boxShadow: '0 0 20px -3px var(--primary-glow)' }}
-            >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#1677FF] to-[#06D6FF] flex items-center justify-center shadow-lg shadow-[#1677FF]/30 transition-transform group-hover:scale-105">
               <Compass className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="text-lg font-bold tracking-tight text-[var(--text)] leading-none block">
-                CareerGap <span style={{ color: 'var(--primary)' }}>AI</span>
+              <span className="text-lg font-bold tracking-tight text-[#F8FAFC] leading-none block">
+                CareerGap <span className="text-[#06D6FF]">AI</span>
               </span>
-              <span className="text-[11px] text-[var(--text-muted)] font-medium">
+              <span className="text-[11px] text-[#94A3B8] font-medium tracking-wide">
                 Career Intelligence Engine
               </span>
             </div>
           </Link>
 
-          <span 
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border"
-            style={{
-              backgroundColor: 'var(--primary-soft)',
-              borderColor: 'var(--primary)',
-              color: 'var(--primary)'
-            }}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>AI Career Fit & Skill-Gap Platform</span>
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#0F1D30] border border-[#06D6FF]/30 text-[#06D6FF] shadow-sm">
+            <Cpu className="w-3.5 h-3.5" />
+            <span>Precision Fit Engine</span>
           </span>
         </div>
 
-        {/* Hero Copy */}
-        <div className="my-8 lg:my-10 space-y-4 max-w-xl">
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-[var(--text)] leading-tight">
-              Turn your <span style={{ color: 'var(--primary)' }}>skill gaps</span> into your next opportunity.
+        {/* 5. MAIN HEADLINE & COPY */}
+        <div className="my-8 lg:my-10 space-y-6 max-w-xl">
+          <div className="space-y-2.5">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#F8FAFC] leading-[1.15]">
+              TURN YOUR <span className="bg-gradient-to-r from-[#06D6FF] via-[#38BDF8] to-[#1677FF] bg-clip-text text-transparent">SKILL GAPS</span> INTO YOUR NEXT OPPORTUNITY.
             </h1>
-            <p className="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed font-medium">
-              Understand exactly what stands between you and your target role — then get an AI-generated plan to close the gap with verified project evidence.
+            <p className="text-xs sm:text-sm text-[#CBD5E1] leading-relaxed font-normal">
+              Understand exactly what stands between you and your target role — then get an AI-generated plan to close the gap with verified project proof.
             </p>
           </div>
 
-          {/* 5. CAREER PROGRESS PATH VISUAL */}
-          <div className="py-2">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--text-muted)] relative before:absolute before:left-3 before:right-3 before:top-2 before:h-0.5 before:bg-[var(--border)] before:-z-0">
-              {[
-                { label: 'Profile', active: true, done: true },
-                { label: 'Skills', active: true, done: true },
-                { label: 'Projects', active: true, done: false },
-                { label: 'Job Ready', active: false, done: false },
-              ].map((step, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-1.5 z-10">
-                  <div 
-                    className={`w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold transition-all ${
-                      step.done
-                        ? 'text-white'
-                        : step.active
-                        ? 'ring-4 ring-[var(--primary-soft)] animate-pulse'
-                        : 'bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text-muted)]'
-                    }`}
-                    style={
-                      step.done
-                        ? { backgroundColor: 'var(--success)' }
-                        : step.active
-                        ? { backgroundColor: 'var(--primary)', color: '#fff' }
-                        : {}
-                    }
-                  >
-                    {step.done ? '✓' : idx + 1}
-                  </div>
-                  <span className={step.active ? 'text-[var(--text)] font-bold' : 'text-[var(--text-muted)]'}>
-                    {step.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 3. INTERACTIVE CAREER INTELLIGENCE VISUAL (Floating Mini-Dashboard Preview) */}
+          {/* 6. PRODUCT VISUALIZATION (Miniature CareerGap AI analysis interface) */}
           <div className="relative pt-2">
             
-            {/* Main Preview Container */}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-2xl space-y-4 transition-all">
+            {/* Main Floating Panel */}
+            <div className="rounded-2xl border border-[#1E334D] bg-[#0F1D30]/90 backdrop-blur-xl p-5 sm:p-6 shadow-2xl space-y-5 transition-all">
               
-              {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
-                <div className="flex items-center gap-2">
-                  <Target className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+              {/* Top Row: Target Role & Readiness */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E334D]">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#1677FF]/20 border border-[#1677FF]/40 flex items-center justify-center text-[#06D6FF]">
+                    <Target className="w-5 h-5" />
+                  </div>
                   <div>
-                    <span className="text-xs font-bold text-[var(--text)] block">
-                      Target: Machine Learning Engineer
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#94A3B8] block">
+                      Target Role Analysis
                     </span>
-                    <span className="text-[10px] text-[var(--text-muted)]">
-                      AI Nexus Corp • Example Career Analysis
-                    </span>
+                    <h3 className="text-sm font-bold text-[#F8FAFC]">
+                      Machine Learning Engineer
+                    </h3>
                   </div>
                 </div>
-                <span className="text-[11px] font-bold text-[var(--success)] bg-[var(--success-soft)] px-2.5 py-0.5 rounded-full border border-[var(--success)]/20">
-                  +14% This Month
-                </span>
+
+                <div className="flex items-center gap-3 bg-[#0B1728] px-3 py-1.5 rounded-xl border border-[#1E334D]">
+                  <div className="text-right">
+                    <span className="text-lg font-black text-[#06D6FF] leading-none block">78%</span>
+                    <span className="text-[9px] uppercase font-bold text-[#94A3B8]">Job Ready</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-[#14B8A6] bg-[#14B8A6]/15 px-2 py-0.5 rounded-md">
+                    +14% this month
+                  </span>
+                </div>
               </div>
 
-              {/* Central Ring & Metrics Row */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                
-                {/* SVG Progress Ring */}
-                <div className="flex items-center gap-4">
-                  <div className="relative w-20 h-20 flex items-center justify-center">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        className="stroke-[var(--border)]"
-                        strokeWidth="10"
-                        fill="none"
-                      />
-                      <circle
-                        cx="50"
-                        cy="50"
-                        r="40"
-                        style={{ stroke: 'var(--primary)' }}
-                        strokeWidth="10"
-                        strokeDasharray={2 * Math.PI * 40}
-                        strokeDashoffset={2 * Math.PI * 40 * (1 - 0.78)}
-                        strokeLinecap="round"
-                        fill="none"
-                        className="transition-all duration-1000 ease-out"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <span className="text-lg font-black leading-none" style={{ color: 'var(--primary)' }}>
-                        78%
-                      </span>
-                      <span className="text-[8px] font-bold uppercase tracking-wider text-[var(--text-muted)] mt-0.5">
-                        Match
+              {/* Skill Alignment Horizontal Bars */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider">
+                  <span>Skill Alignment</span>
+                  <span className="text-[#06D6FF]">Proficiency vs Role Need</span>
+                </div>
+
+                {/* Strong Skills (Teal) */}
+                <div className="space-y-1.5">
+                  {[
+                    { name: 'Python 3.12', pct: 90, color: '#14B8A6', status: 'Matched' },
+                    { name: 'SQL Relational', pct: 82, color: '#14B8A6', status: 'Matched' },
+                    { name: 'RAG Architecture', pct: 86, color: '#14B8A6', status: 'Matched' },
+                    { name: 'Docker Containers', pct: 20, color: '#EF4444', status: 'Missing' },
+                    { name: 'AWS Cloud Microservices', pct: 25, color: '#EF4444', status: 'Missing' },
+                  ].map((skill, idx) => (
+                    <div key={idx} className="flex items-center gap-3 text-xs bg-[#07111F] p-2 rounded-xl border border-[#1E334D]/60">
+                      <span className="w-28 truncate font-semibold text-[#F8FAFC]">{skill.name}</span>
+                      <div className="flex-1 h-2 rounded-full bg-[#13243A] overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{
+                            width: `${skill.pct}%`,
+                            backgroundColor: skill.color
+                          }}
+                        />
+                      </div>
+                      <span className="w-8 text-right font-mono text-[11px] font-bold" style={{ color: skill.color }}>
+                        {skill.pct}%
                       </span>
                     </div>
-                  </div>
-
-                  <div className="space-y-0.5">
-                    <span className="text-xs font-bold text-[var(--text)] block">Job Readiness Index</span>
-                    <p className="text-[11px] text-[var(--text-muted)]">
-                      4 high-priority skills away from benchmark
-                    </p>
-                  </div>
-                </div>
-
-                {/* Semantic Color Breakdown Chips (Layer 2) */}
-                <div className="grid grid-cols-3 gap-1.5 text-center w-full sm:w-auto">
-                  <div className="p-2 rounded-xl bg-[var(--success-soft)] text-[var(--success)] border border-[var(--success)]/20">
-                    <span className="text-xs font-bold block">12</span>
-                    <span className="text-[9px] uppercase font-semibold">Matched</span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-[var(--warning-soft)] text-[var(--warning)] border border-[var(--warning)]/20">
-                    <span className="text-xs font-bold block">3</span>
-                    <span className="text-[9px] uppercase font-semibold">Weak</span>
-                  </div>
-                  <div className="p-2 rounded-xl bg-[var(--danger-soft)] text-[var(--danger)] border border-[var(--danger)]/20">
-                    <span className="text-xs font-bold block">4</span>
-                    <span className="text-[9px] uppercase font-semibold">Missing</span>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Next Best Action Banner inside preview */}
-              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2.5 truncate">
-                  <div 
-                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: 'var(--primary-soft)', color: 'var(--primary)' }}
-                  >
-                    <Zap className="w-3.5 h-3.5" />
+              {/* Next Best Action Card */}
+              <div className="rounded-xl border border-[#06D6FF]/40 bg-[#0B1728] p-3.5 flex items-center justify-between gap-3 shadow-lg">
+                <div className="flex items-center gap-3 truncate">
+                  <div className="w-8 h-8 rounded-lg bg-[#1677FF]/20 border border-[#1677FF]/40 flex items-center justify-center text-[#06D6FF] shrink-0">
+                    <Zap className="w-4 h-4" />
                   </div>
                   <div className="truncate">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] block">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#06D6FF] block">
                       Next Best Action
                     </span>
-                    <span className="text-xs font-bold text-[var(--text)] truncate block">
+                    <span className="text-xs font-bold text-[#F8FAFC] truncate block">
                       Complete Docker Fundamentals
                     </span>
                   </div>
                 </div>
 
-                <span 
-                  className="px-2.5 py-1 rounded-lg text-[10px] font-bold shrink-0 border"
-                  style={{
-                    backgroundColor: 'var(--primary-soft)',
-                    borderColor: 'var(--primary)',
-                    color: 'var(--primary)'
-                  }}
-                >
+                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-[#1677FF]/20 text-[#06D6FF] border border-[#1677FF]/30 shrink-0">
                   +8 readiness pts
                 </span>
               </div>
             </div>
 
-            {/* 4. FLOATING AI INSIGHT CARDS */}
-            <div className="hidden sm:grid grid-cols-2 gap-3 mt-3">
-              <div className="p-3 rounded-xl border border-[var(--danger)]/30 bg-[var(--surface)] shadow-lg space-y-1">
-                <div className="flex items-center justify-between text-[10px] font-bold">
-                  <span className="text-[var(--danger)] flex items-center gap-1">
-                    <ArrowDownRight className="w-3 h-3" /> Critical Gap
-                  </span>
-                  <span className="text-[var(--danger)]">-32% Gap</span>
+            {/* 7. FLOATING INSIGHT CARDS */}
+            <div className="hidden sm:grid grid-cols-3 gap-3 mt-3">
+              <div className="p-3 rounded-xl border border-[#EF4444]/40 bg-[#0F1D30] shadow-xl space-y-1">
+                <div className="flex items-center justify-between text-[10px] font-bold text-[#EF4444]">
+                  <span>AI GAP DETECTED</span>
+                  <span>HIGH</span>
                 </div>
-                <p className="text-[11px] font-bold text-[var(--text)]">Docker Containerization</p>
+                <p className="text-xs font-bold text-[#F8FAFC] truncate">Docker Containerization</p>
               </div>
 
-              <div className="p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-lg space-y-1">
-                <div className="flex items-center justify-between text-[10px] font-bold">
-                  <span style={{ color: 'var(--primary)' }} className="flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" /> Career Roadmap
-                  </span>
-                  <span className="text-[var(--text-muted)]">Step 2 of 6</span>
+              <div className="p-3 rounded-xl border border-[#06D6FF]/40 bg-[#0F1D30] shadow-xl space-y-1">
+                <div className="flex items-center justify-between text-[10px] font-bold text-[#06D6FF]">
+                  <span>ROADMAP</span>
+                  <span>2 / 6</span>
                 </div>
-                <div className="h-1.5 w-full rounded-full bg-[var(--border)] overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: '40%', backgroundColor: 'var(--primary)' }} />
+                <div className="h-1.5 w-full rounded-full bg-[#1E334D] overflow-hidden mt-1">
+                  <div className="h-full bg-[#06D6FF] rounded-full" style={{ width: '33%' }} />
                 </div>
+              </div>
+
+              <div className="p-3 rounded-xl border border-[#14B8A6]/40 bg-[#0F1D30] shadow-xl space-y-1">
+                <div className="flex items-center justify-between text-[10px] font-bold text-[#14B8A6]">
+                  <span>JOB READINESS</span>
+                  <span>+14%</span>
+                </div>
+                <p className="text-xs font-bold text-[#F8FAFC]">78% Benchmark</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 6. VALUE PILLARS & 20. DIFFERENTIATOR BREAKDOWN */}
-        <div className="space-y-3 pt-4 border-t border-[var(--border)]">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-semibold text-[var(--text)]">
+        {/* Value Pillars */}
+        <div className="space-y-3 pt-4 border-t border-[#1E334D]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-semibold text-[#CBD5E1]">
             <div className="flex items-center gap-1.5">
-              <span style={{ color: 'var(--primary)' }}>✦</span>
+              <span className="text-[#06D6FF]">✦</span>
               <span>Explainable AI matching</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span style={{ color: 'var(--primary)' }}>✦</span>
-              <span>Personalized roadmaps</span>
+              <span className="text-[#06D6FF]">✦</span>
+              <span>Personalized skill-gap roadmap</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span style={{ color: 'var(--primary)' }}>✦</span>
+              <span className="text-[#06D6FF]">✦</span>
               <span>Project recommendations</span>
             </div>
           </div>
 
-          <div className="text-[11px] text-[var(--text-muted)] flex flex-wrap items-center gap-2 pt-1 font-mono">
-            <span className="opacity-70">Traditional ATS: Resume → Raw Score</span>
-            <span>•</span>
-            <span className="font-bold text-[var(--text)]">CareerGap AI: Resume → Skill Gap → Next Move</span>
+          <div className="text-[11px] text-[#94A3B8] font-mono opacity-80 pt-1">
+            "Don't just know your match. Know your next move."
           </div>
         </div>
       </div>
 
       {/* ============================================================
-          RIGHT PANEL (45% on Desktop): Elevated Auth Panel
+          RIGHT PANEL (45% on Desktop): Premium Dark Auth Surface
           ============================================================ */}
       <div className="w-full lg:w-[45%] p-6 sm:p-10 lg:p-14 flex items-center justify-center relative z-10">
         
-        {/* Main Form Card (Section 7 & 8) */}
+        {/* 8. AUTH PANEL (#0B1728, border #1E334D, radius 20px) */}
         <div 
-          className="w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-7 sm:p-9 shadow-2xl space-y-6 relative transition-all"
-          style={{ boxShadow: '0 12px 36px -8px rgba(0, 0, 0, 0.25)' }}
+          className="w-full max-w-md rounded-3xl border border-[#1E334D] bg-[#0B1728] p-7 sm:p-9 shadow-2xl space-y-6 relative transition-all"
+          style={{ boxShadow: '0 20px 50px -10px rgba(7, 17, 31, 0.9)' }}
         >
-          {/* Eyebrow & Title */}
+          {/* Eyebrow & Heading */}
           <div className="space-y-1.5">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)] block">
-              CareerGap AI • Intelligence Access
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#06D6FF] block">
+              CAREERGAP AI • INTELLIGENCE PORTAL
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text)]">
+            <h2 className="text-2xl font-bold tracking-tight text-[#F8FAFC]">
               Welcome back 👋
             </h2>
-            <p className="text-xs text-[var(--text-muted)]">
+            <p className="text-xs text-[#94A3B8]">
               Continue your career intelligence journey.
             </p>
           </div>
 
-          {/* 1-Click Hackathon Evaluation Login */}
+          {/* 1-Click Demo Login */}
           <button
             onClick={handleDemoLogin}
             disabled={submitting}
             type="button"
-            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white shadow-md flex items-center justify-center gap-2 transition hover:opacity-95 disabled:opacity-50 cursor-pointer"
-            style={{ backgroundColor: 'var(--primary)', boxShadow: '0 0 16px -2px var(--primary-glow)' }}
+            className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white shadow-lg flex items-center justify-center gap-2 transition hover:opacity-95 disabled:opacity-50 cursor-pointer bg-gradient-to-r from-[#1677FF] to-[#06D6FF]"
+            style={{ boxShadow: '0 0 20px -3px rgba(22, 119, 255, 0.4)' }}
           >
             <Sparkles className="w-4 h-4" />
             <span>1-Click Hackathon Demo Access</span>
           </button>
 
-          {/* Google Login (Section 10 — Neutral Brand styling per Google Guidelines) */}
+          {/* 9. GOOGLE LOGIN */}
           <button
             onClick={handleGoogleLogin}
             disabled={submitting || loading}
             type="button"
-            className="w-full py-2.5 px-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-xs font-semibold text-[var(--text)] flex items-center justify-center gap-2.5 transition hover:border-[var(--border-strong)] disabled:opacity-50 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-xl border border-[#1E334D] bg-[#0F1D30] hover:bg-[#13243A] hover:border-[#1677FF]/60 text-xs font-semibold text-[#F8FAFC] flex items-center justify-center gap-2.5 transition disabled:opacity-50 cursor-pointer"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -408,61 +339,61 @@ export const LoginPage: React.FC = () => {
 
           {/* Divider */}
           <div className="relative flex py-1 items-center">
-            <div className="flex-grow border-t border-[var(--border)]" />
-            <span className="flex-shrink mx-3 text-[10px] uppercase font-bold text-[var(--text-muted)]">
+            <div className="flex-grow border-t border-[#1E334D]" />
+            <span className="flex-shrink mx-3 text-[10px] uppercase font-bold text-[#94A3B8]">
               or continue with email
             </span>
-            <div className="flex-grow border-t border-[var(--border)]" />
+            <div className="flex-grow border-t border-[#1E334D]" />
           </div>
 
-          {/* Form */}
+          {/* 10. INPUT FIELDS (#07111F, border #1E334D, focus cyan glow) */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-3 rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-soft)] text-xs text-[var(--danger)] flex items-center gap-2 animate-in fade-in">
+              <div className="p-3 rounded-xl border border-[#EF4444]/40 bg-[#EF4444]/10 text-xs text-[#EF4444] flex items-center gap-2 animate-in fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-[var(--text-muted)]">Email Address</label>
+              <label className="text-xs font-semibold text-[#CBD5E1]">Email address</label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[var(--text-muted)]" />
+                <Mail className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[#94A3B8]" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="alex.chen@example.com"
+                  placeholder="Enter your email"
                   required
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] py-2.5 pl-10 pr-4 text-xs text-[var(--text)] transition focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full rounded-xl border border-[#1E334D] bg-[#07111F] py-2.5 pl-10 pr-4 text-xs text-[#F8FAFC] placeholder-[#64748B] transition focus:outline-none focus:border-[#06D6FF] focus:ring-2 focus:ring-[#06D6FF]/20"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-[var(--text-muted)]">Password</label>
+                <label className="text-xs font-semibold text-[#CBD5E1]">Password</label>
                 <Link
                   to="/forgot-password"
-                  className="text-[11px] font-semibold text-[var(--primary)] hover:underline"
+                  className="text-[11px] font-semibold text-[#06D6FF] hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[var(--text-muted)]" />
+                <Lock className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[#94A3B8]" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] py-2.5 pl-10 pr-10 text-xs text-[var(--text)] transition focus:outline-none focus:border-[var(--primary)]"
+                  className="w-full rounded-xl border border-[#1E334D] bg-[#07111F] py-2.5 pl-10 pr-10 text-xs text-[#F8FAFC] placeholder-[#64748B] transition focus:outline-none focus:border-[#06D6FF] focus:ring-2 focus:ring-[#06D6FF]/20"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-[var(--text-muted)] hover:text-[var(--text)] transition"
+                  className="absolute right-3 top-3 text-[#94A3B8] hover:text-[#F8FAFC] transition"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -470,15 +401,12 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Primary Sign In Button (Section 11 Micro-interaction) */}
+            {/* 11. PRIMARY BUTTON (#1677FF to #06D6FF gradient) */}
             <button
               type="submit"
               disabled={submitting || loading}
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white shadow-md flex items-center justify-center gap-2 transition hover:opacity-95 disabled:opacity-50 cursor-pointer"
-              style={{
-                backgroundColor: authSuccess ? 'var(--success)' : 'var(--primary)',
-                boxShadow: '0 0 16px -2px var(--primary-glow)'
-              }}
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white shadow-lg flex items-center justify-center gap-2 transition hover:opacity-95 disabled:opacity-50 cursor-pointer bg-gradient-to-r from-[#1677FF] to-[#06D6FF]"
+              style={{ boxShadow: '0 0 20px -3px rgba(22, 119, 255, 0.4)' }}
             >
               {authSuccess ? (
                 <>
@@ -491,24 +419,23 @@ export const LoginPage: React.FC = () => {
                   <span>Signing in...</span>
                 </>
               ) : (
-                <span>Sign in →</span>
+                <span>SIGN IN →</span>
               )}
             </button>
           </form>
 
           {/* Register Link */}
-          <div className="text-center pt-3 border-t border-[var(--border)]">
-            <span className="text-xs text-[var(--text-muted)]">Don't have an account? </span>
+          <div className="text-center pt-3 border-t border-[#1E334D]">
+            <span className="text-xs text-[#94A3B8]">Don't have an account? </span>
             <Link
               to="/register"
-              className="text-xs font-semibold text-[var(--primary)] hover:underline"
+              className="text-xs font-semibold text-[#06D6FF] hover:underline"
             >
               Create your free account →
             </Link>
           </div>
 
-          {/* 9. Trust Indicator */}
-          <div className="text-center pt-1 text-[11px] text-[var(--text-muted)] flex items-center justify-center gap-1.5 opacity-80">
+          <div className="text-center pt-1 text-[11px] text-[#94A3B8] flex items-center justify-center gap-1.5 opacity-80">
             <span>🔒 Authentication powered by Firebase</span>
           </div>
         </div>

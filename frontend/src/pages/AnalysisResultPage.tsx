@@ -240,9 +240,9 @@ export const AnalysisResultPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             <Link
               to={`/interview/${analysis.id}`}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center gap-2 shadow-md transition"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#1677FF] to-[#06D6FF] hover:opacity-95 text-[#07111F] text-xs font-extrabold flex items-center gap-2 shadow-md shadow-[#1677FF]/20 transition"
             >
-              <Mic className="w-4 h-4" />
+              <Mic className="w-4 h-4 text-[#07111F]" />
               <span>Practice Mock Interview</span>
             </Link>
 

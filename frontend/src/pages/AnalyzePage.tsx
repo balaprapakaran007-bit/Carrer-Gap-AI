@@ -367,9 +367,9 @@ SKILLS: Python, PyTorch, SQL, PostgreSQL, Machine Learning, Deep Learning, NLP, 
         ) : (
           <button
             onClick={handleRunAnalysis}
-            className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold shadow-xl shadow-blue-500/25 flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 cursor-pointer"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#1677FF] to-[#06D6FF] hover:opacity-95 text-[#07111F] text-sm font-extrabold shadow-xl shadow-[#1677FF]/25 flex items-center justify-center gap-2.5 transition transform hover:-translate-y-0.5 cursor-pointer"
           >
-            <Sparkles className="w-5 h-5" />
+            <Sparkles className="w-5 h-5 fill-[#07111F]" />
             <span>Analyze Compatibility & Generate Actionable Roadmap</span>
           </button>
         )}

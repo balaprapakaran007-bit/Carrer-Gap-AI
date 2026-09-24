@@ -1,52 +1,64 @@
 /* ============================================================
-   CAREERGAP AI — 3-LAYER ACCESSIBLE COLOR & THEME SYSTEM
+   CAREERGAP AI — HAVENMATCH-INSPIRED PREMIUM VISUAL SYSTEM
+   Deep Navy + Electric Blue + Cyan + Teal + White
    ============================================================ */
 
 :root {
-  /* LAYER 1: BRAND PALETTE (Default: Indigo #4F46E5) */
-  --primary: #4F46E5;
-  --primary-hover: #4338CA;
-  --primary-soft: rgba(79, 70, 229, 0.12);
+  /* LAYER 1: BRAND PALETTE (Default: Haven-Style AI Blue #1677FF & Cyan #06D6FF) */
+  --primary: #1677FF;
+  --primary-bright: #2563EB;
+  --primary-hover: #1263DB;
+  --primary-soft: rgba(22, 119, 255, 0.14);
   --on-primary: #FFFFFF;
-  --primary-glow: rgba(79, 70, 229, 0.25);
+  --primary-glow: rgba(22, 119, 255, 0.35);
 
-  /* LAYER 2: SEMANTIC PALETTE (Fixed, non-themeable across all modes) */
-  --success: #16A34A;
-  --success-soft: rgba(22, 163, 74, 0.12);
-  --warning: #D97706;
-  --warning-soft: rgba(217, 119, 6, 0.12);
-  --danger: #DC2626;
-  --danger-soft: rgba(220, 38, 38, 0.12);
-  --info: #64748B;
-  --info-soft: rgba(100, 116, 139, 0.12);
+  --ai-cyan: #06D6FF;
+  --ai-cyan-soft: rgba(6, 214, 255, 0.14);
+  --ai-teal: #14B8A6;
+  --ai-teal-soft: rgba(20, 184, 166, 0.14);
 
-  /* LAYER 3: NEUTRALS — DARK MODE DEFAULT */
-  --background: #0B0B0D;
-  --surface: #17171A;
-  --surface-2: #202024;
-  --border: #2C2C31;
-  --text: #F4F4F5;
-  --text-muted: #A1A1AA;
+  /* LAYER 2: SEMANTIC PALETTE (Fixed across all themes) */
+  --success: #14B8A6;         /* Verified Teal */
+  --success-soft: rgba(20, 184, 166, 0.14);
+  --warning: #F59E0B;         /* Amber */
+  --warning-soft: rgba(245, 158, 11, 0.14);
+  --danger: #EF4444;          /* Red */
+  --danger-soft: rgba(239, 68, 68, 0.14);
+  --info: #06D6FF;
+  --info-soft: rgba(6, 214, 255, 0.14);
 
-  /* BACKWARD COMPATIBILITY ALIASES */
-  --bg-app: var(--background);
+  /* LAYER 3: DEEP NAVY NEUTRALS (Dark Mode Primary) */
+  --bg-primary: #07111F;
+  --bg-secondary: #0B1728;
+  --surface: #0F1D30;
+  --surface-elevated: #13243A;
+  --border: #1E334D;
+  --border-strong: #2D4A6E;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+
+  /* Standard aliases */
+  --background: var(--bg-primary);
+  --surface-2: var(--surface-elevated);
+  --text: var(--text-primary);
+  --text-main: var(--text-primary);
+  --bg-app: var(--bg-primary);
   --bg-surface: var(--surface);
-  --bg-surface-elevated: var(--surface-2);
-  --bg-card: var(--surface-2);
+  --bg-surface-elevated: var(--surface-elevated);
+  --bg-card: var(--surface);
   --border-subtle: var(--border);
-  --border-strong: #3F3F46;
-  --text-main: var(--text);
   --primary-muted: var(--primary-soft);
 
-  /* DENSITY & SIZING */
+  /* SIZING & RADIUS */
   --card-padding: 1.5rem;
   --gap-size: 1.25rem;
   --row-py: 0.875rem;
 
-  /* TYPOGRAPHY & RADIUS */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --radius-lg: 1rem;
-  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-md: 0.875rem;
   --radius-sm: 0.5rem;
 }
 
@@ -54,119 +66,132 @@
    LIGHT MODE NEUTRALS (LAYER 3)
    ============================================================ */
 html[data-mode="light"] {
-  --background: #FAFAFA;
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #F1F5F9;
   --surface: #FFFFFF;
-  --surface-2: #F4F4F5;
-  --border: #E4E4E7;
-  --text: #18181B;
-  --text-muted: #71717A;
+  --surface-elevated: #F8FAFC;
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
 
-  --border-subtle: var(--border);
-  --border-strong: #D4D4D8;
-  --primary-soft: rgba(79, 70, 229, 0.08);
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+
+  --background: #F8FAFC;
+  --surface-2: #F1F5F9;
+  --text: #0F172A;
+  --text-main: #0F172A;
+  --bg-app: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --border-subtle: #E2E8F0;
+  --primary-soft: rgba(22, 119, 255, 0.08);
 }
 
 /* ============================================================
    BRAND THEME PRESETS (LAYER 1)
    ============================================================ */
-/* 1. Indigo (Default) */
+/* 1. Ocean AI (Haven-Style Default) */
+html[data-theme="ocean"] {
+  --primary: #1677FF;
+  --primary-bright: #2563EB;
+  --primary-hover: #1263DB;
+  --primary-soft: rgba(22, 119, 255, 0.14);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(22, 119, 255, 0.35);
+  --ai-cyan: #06D6FF;
+}
+
+/* 2. Emerald AI */
+html[data-theme="emerald"] {
+  --primary: #14B8A6;
+  --primary-bright: #0D9488;
+  --primary-hover: #0F766E;
+  --primary-soft: rgba(20, 184, 166, 0.14);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(20, 184, 166, 0.35);
+  --ai-cyan: #2DD4BF;
+}
+
+/* 3. Cyan AI */
+html[data-theme="cyan"] {
+  --primary: #06B6D4;
+  --primary-bright: #0891B2;
+  --primary-hover: #0E7490;
+  --primary-soft: rgba(6, 182, 212, 0.14);
+  --on-primary: #FFFFFF;
+  --primary-glow: rgba(6, 182, 212, 0.35);
+  --ai-cyan: #06D6FF;
+}
+
+/* 4. Indigo */
 html[data-theme="indigo"] {
   --primary: #4F46E5;
+  --primary-bright: #6366F1;
   --primary-hover: #4338CA;
-  --primary-soft: rgba(79, 70, 229, 0.12);
+  --primary-soft: rgba(79, 70, 229, 0.14);
   --on-primary: #FFFFFF;
-  --primary-glow: rgba(79, 70, 229, 0.25);
+  --primary-glow: rgba(79, 70, 229, 0.35);
+  --ai-cyan: #38BDF8;
 }
 
-/* 2. Ocean Blue */
-html[data-theme="ocean"] {
-  --primary: #2563EB;
-  --primary-hover: #1D4ED8;
-  --primary-soft: rgba(37, 99, 235, 0.12);
-  --on-primary: #FFFFFF;
-  --primary-glow: rgba(37, 99, 235, 0.25);
-}
-
-/* 3. Emerald (Darkened for WCAG AA 4.5:1) */
-html[data-theme="emerald"] {
-  --primary: #059669;
-  --primary-hover: #047857;
-  --primary-soft: rgba(5, 150, 105, 0.12);
-  --on-primary: #FFFFFF;
-  --primary-glow: rgba(5, 150, 105, 0.25);
-}
-
-/* 4. Violet */
-html[data-theme="violet"] {
-  --primary: #7C3AED;
-  --primary-hover: #6D28D9;
-  --primary-soft: rgba(124, 58, 237, 0.12);
-  --on-primary: #FFFFFF;
-  --primary-glow: rgba(124, 58, 237, 0.25);
-}
-
-/* 5. Sunset Orange (Darkened for WCAG AA 4.5:1) */
+/* 5. Sunset Orange */
 html[data-theme="sunset"] {
   --primary: #EA580C;
+  --primary-bright: #F97316;
   --primary-hover: #C2410C;
-  --primary-soft: rgba(234, 88, 12, 0.12);
+  --primary-soft: rgba(234, 88, 12, 0.14);
   --on-primary: #FFFFFF;
-  --primary-glow: rgba(234, 88, 12, 0.25);
+  --primary-glow: rgba(234, 88, 12, 0.35);
+  --ai-cyan: #FDBA74;
 }
 
 /* 6. Rose */
 html[data-theme="rose"] {
   --primary: #E11D48;
+  --primary-bright: #F43F5E;
   --primary-hover: #BE123C;
-  --primary-soft: rgba(225, 29, 72, 0.12);
+  --primary-soft: rgba(225, 29, 72, 0.14);
   --on-primary: #FFFFFF;
-  --primary-glow: rgba(225, 29, 72, 0.25);
+  --primary-glow: rgba(225, 29, 72, 0.35);
+  --ai-cyan: #FDA4AF;
 }
 
-/* 7. Cyan (Darkened for WCAG AA 4.5:1) */
-html[data-theme="cyan"] {
-  --primary: #0891B2;
-  --primary-hover: #0E7490;
-  --primary-soft: rgba(8, 145, 178, 0.12);
-  --on-primary: #FFFFFF;
-  --primary-glow: rgba(8, 145, 178, 0.25);
-}
-
-/* 8. Monochrome */
+/* 7. Monochrome */
 html[data-theme="monochrome"] {
-  --primary: #475569;
-  --primary-hover: #334155;
-  --primary-soft: rgba(71, 85, 105, 0.12);
+  --primary: #64748B;
+  --primary-bright: #94A3B8;
+  --primary-hover: #475569;
+  --primary-soft: rgba(100, 116, 139, 0.14);
   --on-primary: #FFFFFF;
-  --primary-glow: rgba(71, 85, 105, 0.25);
+  --primary-glow: rgba(100, 116, 139, 0.35);
+  --ai-cyan: #CBD5E1;
 }
 
 /* ============================================================
    ACCESSIBILITY & DENSITY AXES
    ============================================================ */
-/* Compact Density */
 html[data-density="compact"] {
   --card-padding: 1rem;
   --gap-size: 0.875rem;
   --row-py: 0.5rem;
 }
 
-/* High Contrast Mode */
 html[data-contrast="high"] {
-  --border: #4A4A52;
-  --border-subtle: #4A4A52;
-  --border-strong: #71717A;
-  --text-muted: #D4D4D8;
+  --border: #33557A;
+  --border-subtle: #33557A;
+  --border-strong: #4F7EA8;
+  --text-muted: #E2E8F0;
 }
 
 html[data-mode="light"][data-contrast="high"] {
-  --border: #A1A1AA;
-  --border-subtle: #A1A1AA;
-  --border-strong: #52525B;
-  --text-muted: #27272A;
+  --border: #94A3B8;
+  --border-subtle: #94A3B8;
+  --border-strong: #475569;
+  --text-muted: #1E293B;
 }
 
-/* Reduced Motion Mode */
 html[data-motion="reduced"] *,
 html[data-motion="reduced"] *::before,
 html[data-motion="reduced"] *::after {
@@ -176,7 +201,6 @@ html[data-motion="reduced"] *::after {
   scroll-behavior: auto !important;
 }
 
-/* Global focus outlines */
 *:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;

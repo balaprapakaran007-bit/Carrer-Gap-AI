@@ -63,7 +63,7 @@ export const InterviewPage: React.FC = () => {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 mx-auto animate-spin">
+          <div className="w-10 h-10 rounded-xl bg-[#1677FF]/20 border border-[#1677FF]/30 flex items-center justify-center text-[#06D6FF] mx-auto animate-spin">
             <Sparkles className="w-5 h-5" />
           </div>
           <p className="text-xs text-slate-400 font-mono">Generating Role-Tailored Interview Questions...</p>
@@ -75,7 +75,7 @@ export const InterviewPage: React.FC = () => {
   const currentQuestion = session?.questions[activeQuestionIdx];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 selection:bg-purple-500 selection:text-white">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 selection:bg-[#1677FF] selection:text-white">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -89,7 +89,7 @@ export const InterviewPage: React.FC = () => {
           </Link>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center gap-2.5">
-              <Mic className="w-6 h-6 text-purple-400" />
+              <Mic className="w-6 h-6 text-[#06D6FF]" />
               <span>Role-Tailored Mock Interview Simulator</span>
             </h1>
           </div>
@@ -98,7 +98,7 @@ export const InterviewPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-bold">
+        <div className="px-3 py-1.5 rounded-xl bg-[#1677FF]/10 border border-[#1677FF]/20 text-[#06D6FF] text-xs font-bold font-mono">
           {session?.completedQuestionsCount || 0} of {session?.questions.length || 0} Questions Evaluated
         </div>
       </div>
@@ -123,14 +123,14 @@ export const InterviewPage: React.FC = () => {
                   onClick={() => handleSelectQuestion(idx)}
                   className={`w-full p-3.5 rounded-xl text-left transition border cursor-pointer ${
                     isCurrent
-                      ? 'bg-purple-600/15 border-purple-500/40 text-white shadow-md'
+                      ? 'bg-[#1677FF]/15 border-[#1677FF]/40 text-white shadow-md'
                       : 'bg-slate-950/60 border-slate-800/80 text-slate-300 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center justify-between text-[11px] mb-1">
-                    <span className="font-bold text-purple-400">Q{idx + 1} • {q.category.split('(')[0]}</span>
+                    <span className="font-bold text-[#06D6FF]">Q{idx + 1} • {q.category.split('(')[0]}</span>
                     {hasAnswered && (
-                      <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-semibold">
+                      <span className="flex items-center gap-1 text-[10px] text-[#14B8A6] font-semibold">
                         <CheckCircle2 className="w-3 h-3" />
                         {q.totalScore ? `${q.totalScore}/5` : 'Scored'}
                       </span>
@@ -151,7 +151,7 @@ export const InterviewPage: React.FC = () => {
               {/* Question Header */}
               <div className="space-y-3 pb-4 border-b border-slate-800">
                 <div className="flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#1677FF]/15 text-[#06D6FF] border border-[#1677FF]/30">
                     {currentQuestion.category}
                   </span>
                   <span className="text-xs font-semibold text-slate-400">
@@ -187,7 +187,7 @@ export const InterviewPage: React.FC = () => {
                   value={userAnswer}
                   onChange={(e) => setUserAnswer(e.target.value)}
                   placeholder="Type your structured answer here. Include concrete examples, tools used, and measurable results..."
-                  className="w-full p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition leading-relaxed"
+                  className="w-full p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[#06D6FF] transition leading-relaxed"
                 />
 
                 <div className="flex items-center justify-between">
@@ -197,7 +197,7 @@ export const InterviewPage: React.FC = () => {
                   <button
                     onClick={handleSubmitAnswer}
                     disabled={isSubmitting || !userAnswer.trim()}
-                    className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-purple-500/20"
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#1677FF] to-[#06D6FF] hover:opacity-90 disabled:opacity-50 text-[#07111F] text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-[#1677FF]/20"
                   >
                     {isSubmitting ? (
                       <>
@@ -216,37 +216,37 @@ export const InterviewPage: React.FC = () => {
 
               {/* AI Rubric Feedback Card (If evaluated) */}
               {currentQuestion.aiFeedback && (
-                <div className="p-5 rounded-2xl border border-purple-500/30 bg-purple-950/15 space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-purple-500/20">
-                    <span className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-purple-400" />
+                <div className="p-5 rounded-2xl border border-[#06D6FF]/30 bg-[#0F1D30] space-y-4">
+                  <div className="flex items-center justify-between pb-3 border-b border-[#1E334D]">
+                    <span className="text-xs font-bold text-[#06D6FF] flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-[#06D6FF]" />
                       <span>AI Rubric Evaluation Results</span>
                     </span>
-                    <span className="text-sm font-black text-white">
+                    <span className="text-sm font-black text-white font-mono">
                       Overall Score: {currentQuestion.totalScore}/5.0
                     </span>
                   </div>
 
                   {/* 3 Rubric Metrics */}
                   <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                    <div className="p-3 rounded-xl bg-[#07111F] border border-[#1E334D]">
                       <span className="text-[10px] text-slate-400 uppercase font-bold">Relevance</span>
-                      <div className="text-base font-bold text-blue-400 mt-0.5">{currentQuestion.scoreRelevance}/5</div>
+                      <div className="text-base font-bold text-[#1677FF] mt-0.5">{currentQuestion.scoreRelevance}/5</div>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                    <div className="p-3 rounded-xl bg-[#07111F] border border-[#1E334D]">
                       <span className="text-[10px] text-slate-400 uppercase font-bold">Depth</span>
-                      <div className="text-base font-bold text-purple-400 mt-0.5">{currentQuestion.scoreDepth}/5</div>
+                      <div className="text-base font-bold text-[#06D6FF] mt-0.5">{currentQuestion.scoreDepth}/5</div>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                    <div className="p-3 rounded-xl bg-[#07111F] border border-[#1E334D]">
                       <span className="text-[10px] text-slate-400 uppercase font-bold">Clarity</span>
-                      <div className="text-base font-bold text-emerald-400 mt-0.5">{currentQuestion.scoreClarity}/5</div>
+                      <div className="text-base font-bold text-[#14B8A6] mt-0.5">{currentQuestion.scoreClarity}/5</div>
                     </div>
                   </div>
 
                   {/* Feedback Text */}
                   <div className="space-y-1.5">
                     <span className="text-[11px] font-bold text-slate-300">Actionable Feedback:</span>
-                    <p className="text-xs text-slate-200 leading-relaxed bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                    <p className="text-xs text-slate-200 leading-relaxed bg-[#07111F] p-3 rounded-xl border border-[#1E334D]">
                       {currentQuestion.aiFeedback}
                     </p>
                   </div>
@@ -254,8 +254,8 @@ export const InterviewPage: React.FC = () => {
                   {/* Improved Snippet */}
                   {currentQuestion.betterAnswerSnippet && (
                     <div className="space-y-1.5">
-                      <span className="text-[11px] font-bold text-purple-300">Model Answer Level-Up Example:</span>
-                      <p className="text-xs italic text-slate-300 bg-slate-950/80 p-3 rounded-xl border-l-2 border-purple-500">
+                      <span className="text-[11px] font-bold text-[#06D6FF]">Model Answer Level-Up Example:</span>
+                      <p className="text-xs italic text-slate-300 bg-[#07111F] p-3 rounded-xl border-l-2 border-[#06D6FF]">
                         "{currentQuestion.betterAnswerSnippet}"
                       </p>
                     </div>

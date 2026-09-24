@@ -65,7 +65,7 @@ export const CareerProgressChart: React.FC = () => {
             onClick={() => setShowSecondaryRole(!showSecondaryRole)}
             className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-semibold flex items-center gap-1.5 transition cursor-pointer ${
               showSecondaryRole
-                ? 'bg-purple-500/15 border-purple-500/30 text-purple-300'
+                ? 'bg-[#06D6FF]/15 border-[#06D6FF]/30 text-[#06D6FF]'
                 : 'bg-slate-950 border-slate-800 text-slate-500'
             }`}
           >
@@ -91,7 +91,7 @@ export const CareerProgressChart: React.FC = () => {
                       <p className="font-bold text-slate-200">{label}</p>
                       <p className="font-bold text-blue-400">ML Engineer: {pData.readiness}%</p>
                       {showSecondaryRole && (
-                        <p className="text-purple-400 font-semibold">AI Platform: {pData.secondary}%</p>
+                        <p className="text-[#06D6FF] font-semibold">AI Platform: {pData.secondary}%</p>
                       )}
                       {pData.milestone && (
                         <p className="text-emerald-400 text-[10px] pt-1 border-t border-slate-800 flex items-center gap-1">
@@ -120,10 +120,10 @@ export const CareerProgressChart: React.FC = () => {
               <Line
                 type="monotone"
                 dataKey="secondary"
-                stroke="#a855f7"
+                stroke="#06D6FF"
                 strokeWidth={2}
                 strokeDasharray="4 4"
-                dot={{ fill: '#a855f7', r: 3 }}
+                dot={{ fill: '#06D6FF', r: 3 }}
               />
             )}
           </LineChart>
@@ -139,8 +139,8 @@ export const CareerProgressChart: React.FC = () => {
           </div>
           {showSecondaryRole && (
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 rounded-full bg-purple-500" />
-              <span>AI Platform Engineer</span>
+              <span className="w-3 h-0.5 rounded-full bg-[#06D6FF]" />
+              <span className="text-[#06D6FF]">AI Platform Engineer</span>
             </div>
           )}
         </div>
