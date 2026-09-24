@@ -104,6 +104,7 @@ export const AnalyzePage: React.FC = () => {
       const file = e.target.files[0];
       setResumeFile(file);
       setResumeFileName(file.name);
+      setErrorMsg('');
 
       const formData = new FormData();
       formData.append('file', file);
@@ -111,8 +112,9 @@ export const AnalyzePage: React.FC = () => {
         const res = await api.uploadResume(formData);
         setResumeText(res.extractedText);
         setResumeUploaded(true);
+        setErrorMsg('');
       } catch (err: any) {
-        setErrorMsg(err.message || 'Error parsing PDF resume');
+        setErrorMsg(err.message || 'Error parsing resume file. Please upload a PDF, DOCX, or TXT file.');
       }
     }
   };

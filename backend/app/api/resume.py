@@ -18,18 +18,15 @@ async def upload_resume(
     if file:
         content = await file.read()
         name = file.filename or "uploaded_resume.pdf"
-        if name.lower().endswith(".pdf"):
-            try:
-                extracted_text = resume_parser.parse_pdf(content)
-            except Exception as e:
-                raise HTTPException(status_code=400, detail=f"We couldn't extract readable text from this PDF. {str(e)}")
-        else:
-            extracted_text = content.decode("utf-8", errors="ignore")
+        try:
+            extracted_text = resume_parser.parse_file(content, name)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"We couldn't extract readable text from this file ({name}). {str(e)}")
     elif rawText and len(rawText.strip()) > 10:
         extracted_text = rawText.strip()
         name = fileName or "Pasted_Resume.txt"
     else:
-        raise HTTPException(status_code=400, detail="Please upload a PDF resume or provide resume text.")
+        raise HTTPException(status_code=400, detail="Please upload a PDF or DOCX resume or provide resume text.")
 
     detected_skills = resume_parser.extract_detected_skills(extracted_text)
     resume_id = str(uuid.uuid4())

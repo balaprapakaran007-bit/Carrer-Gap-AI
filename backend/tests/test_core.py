@@ -73,3 +73,38 @@ def test_benchmark_engine():
     assert res.roleKey == "ai_ml_engineer"
     assert res.avgReadiness > 0
     assert "Python" in res.aheadSkills
+
+def test_resume_parser():
+    from app.services.resume_parser import resume_parser
+    import io, zipfile
+    
+    # Test plain text parsing
+    text = "John Doe\nPython, PyTorch, SQL developer\nExperienced with AWS and Docker"
+    parsed = resume_parser.parse_file(text.encode("utf-8"), "resume.txt")
+    assert "Python" in parsed
+    
+    skills = resume_parser.extract_detected_skills(parsed)
+    assert "Python" in skills
+    assert "SQL" in skills
+    assert "Docker" in skills
+
+    # Test docx parsing
+    docx_buffer = io.BytesIO()
+    with zipfile.ZipFile(docx_buffer, "w") as z:
+        xml_content = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+            <w:body>
+                <w:p><w:r><w:t>Vasanth T</w:t></w:r></w:p>
+                <w:p><w:r><w:t>Software Engineer with Python, Machine Learning, and Kubernetes</w:t></w:r></w:p>
+            </w:body>
+        </w:document>"""
+        z.writestr("word/document.xml", xml_content)
+    
+    docx_bytes = docx_buffer.getvalue()
+    docx_parsed = resume_parser.parse_file(docx_bytes, "Vasanth_T_Resume.docx")
+    assert "Vasanth T" in docx_parsed
+    assert "Python" in docx_parsed
+    
+    docx_skills = resume_parser.extract_detected_skills(docx_parsed)
+    assert "Python" in docx_skills
+    assert "Machine Learning" in docx_skills
